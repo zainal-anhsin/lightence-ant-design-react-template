@@ -30,6 +30,30 @@ const QuizSectionWrapper = styled.div`
   margin-top: 32px;
 `;
 
+const SectionWithTitle = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 320px;
+  margin-right: 32px;
+`;
+
+const SectionTitle = styled.h3`
+  color: #e0e0e0;
+  font-weight: 500;
+  margin-bottom: 18px;
+  margin-left: 8px;
+`;
+
+const SectionBox = styled.div`
+  border-radius: 8px;
+  padding: 24px;
+  background: #23243a;
+  color: #f3f3f3;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  min-height: 100px;
+`;
+
 const QuizPreview = styled.div`
   flex: 1;
   min-width: 320px;
@@ -132,68 +156,79 @@ const QuizSection: React.FC = () => {
 
   return (
     <QuizSectionWrapper>
-      {/* Preview Section on the left */}
-      <QuizPreview>
-        <h3 style={{ color: '#e0e0e0', fontWeight: 500 }}>Preview</h3>
-        {question && (
-          <RichContentPreview
-            style={{ marginBottom: 16 }}
-            dangerouslySetInnerHTML={{ __html: question }}
-          />
-        )}
-        <div>
-          {answers.map((ans, idx) => (
-            <div key={ans.label} style={{
-              display: 'flex', alignItems: 'center', marginBottom: 8,
-              background: correct === ans.label ? '#2a3b4d' : undefined,
-              borderRadius: 4, padding: correct === ans.label ? '2px 8px' : undefined,
-              color: correct === ans.label ? '#b6eaff' : '#b0b0b0',
-              fontWeight: correct === ans.label ? 600 : 400,
-              opacity: ans.value ? 1 : 0.7
-            }}>
-              <span style={{ fontWeight: 'bold', width: 20 }}>{ans.label}</span>
-              <span style={{ marginLeft: 8 }}>{ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}</span>
-              {correct === ans.label && (
-                <CheckOutlined style={{ color: '#52c41a', marginLeft: 8, fontSize: 18 }} />
-              )}
-            </div>
-          ))}
-        </div>
-      </QuizPreview>
-      {/* Content Section on the right */}
-      <QuizContent>
-        <h3>Content</h3>
-        <BaseForm layout="vertical">
-          <BaseForm.Item label="Question/Content">
-            <WysiwygEditor value={question} onChange={setQuestion} />
-          </BaseForm.Item>
-          <BaseForm.Item label="Edit Answers & Options">
+      {/* --- Preview Section (left) --- */}
+      <SectionWithTitle style={{ marginRight: 32 }}>
+        <SectionTitle>Preview</SectionTitle>
+        <SectionBox>
+          {/* Render the WYSIWYG HTML using styled RichContentPreview */}
+          {question && (
+            <RichContentPreview
+              style={{ marginBottom: 16 }}
+              dangerouslySetInnerHTML={{ __html: question }}
+            />
+          )}
+          {/* Render answer options, highlight the correct one */}
+          <div>
             {answers.map((ans, idx) => (
-              <AnswerOption key={ans.label}>
-                <span style={{ width: 20, display: 'inline-block', color: '#b6eaff', fontWeight: correct === ans.label ? 600 : 400 }}>{ans.label}</span>
-                <BaseInput
-                  value={ans.value}
-                  onChange={(e: any) => handleAnswerChange(idx, e.target.value)}
-                  placeholder={`Option ${ans.label}`}
-                  style={{ flex: 1, marginLeft: 8 }}
-                />
-                <SetCorrectButton
-                  type="button"
-                  selected={correct === ans.label}
-                  onClick={() => setCorrect(ans.label)}
-                  aria-label={`Set ${ans.label} as correct answer`}
-                >
-                  {correct === ans.label && <CheckOutlined style={{ marginRight: 4 }} />}
-                  {correct === ans.label ? 'Correct' : 'Set as Correct'}
-                </SetCorrectButton>
-              </AnswerOption>
+              <div key={ans.label} style={{
+                display: 'flex', alignItems: 'center', marginBottom: 8,
+                background: correct === ans.label ? '#2a3b4d' : undefined,
+                borderRadius: 4, padding: correct === ans.label ? '2px 8px' : undefined,
+                color: correct === ans.label ? '#b6eaff' : '#b0b0b0',
+                fontWeight: correct === ans.label ? 600 : 400,
+                opacity: ans.value ? 1 : 0.7
+              }}>
+                <span style={{ fontWeight: 'bold', width: 20 }}>{ans.label}</span>
+                <span style={{ marginLeft: 8 }}>{ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}</span>
+                {correct === ans.label && (
+                  <CheckOutlined style={{ color: '#52c41a', marginLeft: 8, fontSize: 18 }} />
+                )}
+              </div>
             ))}
-            <div style={{ color: '#888', fontSize: 12, marginTop: 8 }}>
-              Click the button to mark the correct answer.
-            </div>
-          </BaseForm.Item>
-        </BaseForm>
-      </QuizContent>
+          </div>
+        </SectionBox>
+      </SectionWithTitle>
+      {/* --- Content Section (right) --- */}
+      <SectionWithTitle style={{ marginRight: 0 }}>
+        <SectionTitle>Content</SectionTitle>
+        <SectionBox>
+          <BaseForm layout="vertical">
+            {/* --- WYSIWYG Editor for question/content --- */}
+            <BaseForm.Item label="Question/Content">
+              {/* This is the main rich text editor for the question */}
+              <WysiwygEditor value={question} onChange={setQuestion} />
+            </BaseForm.Item>
+            {/* --- Editable answer options --- */}
+            <BaseForm.Item label="Edit Answers & Options">
+              {answers.map((ans, idx) => (
+                <AnswerOption key={ans.label}>
+                  <span style={{ width: 20, display: 'inline-block', color: '#b6eaff', fontWeight: correct === ans.label ? 600 : 400 }}>{ans.label}</span>
+                  {/* Input for answer text */}
+                  <BaseInput
+                    value={ans.value}
+                    onChange={(e: any) => handleAnswerChange(idx, e.target.value)}
+                    placeholder={`Option ${ans.label}`}
+                    style={{ flex: 1, marginLeft: 8 }}
+                  />
+                  {/* Button to set this answer as correct */}
+                  <SetCorrectButton
+                    type="button"
+                    selected={correct === ans.label}
+                    onClick={() => setCorrect(ans.label)}
+                    aria-label={`Set ${ans.label} as correct answer`}
+                  >
+                    {correct === ans.label && <CheckOutlined style={{ marginRight: 4 }} />}
+                    {correct === ans.label ? 'Correct' : 'Set as Correct'}
+                  </SetCorrectButton>
+                </AnswerOption>
+              ))}
+              <div style={{ color: '#888', fontSize: 12, marginTop: 8 }}>
+                Click the button to mark the correct answer.
+              </div>
+            </BaseForm.Item>
+          </BaseForm>
+        </SectionBox>
+      </SectionWithTitle>
     </QuizSectionWrapper>
   );
 };

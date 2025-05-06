@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import ReactQuill, { Quill } from 'react-quill';
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 interface WysiwygEditorProps {
@@ -7,29 +7,31 @@ interface WysiwygEditorProps {
   onChange: (value: string) => void;
 }
 
-// Add a custom blank button to the toolbar
 const CustomToolbar = () => (
-  <div id="custom-toolbar">
-    <select className="ql-header" defaultValue="" onChange={e => e.persist()}>
-      <option value="1"></option>
-      <option value="2"></option>
-      <option value=""></option>
-    </select>
-    <button className="ql-bold" />
-    <button className="ql-italic" />
-    <button className="ql-underline" />
-    <button className="ql-list" value="ordered" />
-    <button className="ql-list" value="bullet" />
-    <button className="ql-align" value="" />
-    <button className="ql-align" value="center" />
-    <button className="ql-align" value="right" />
-    <button className="ql-image" />
-    <button className="ql-blank" title="Insert Blank" aria-label="Insert Blank">
+  <div id="custom-toolbar" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+    <div data-tooltip="Heading">
+      <select className="ql-header" defaultValue="">
+        <option value="1">Heading 1</option>
+        <option value="2">Heading 2</option>
+        <option value="">Normal</option>
+      </select>
+    </div>
+
+    <button className="ql-bold" data-tooltip="Bold" />
+    <button className="ql-italic" data-tooltip="Italic" />
+    <button className="ql-underline" data-tooltip="Underline" />
+    <button className="ql-list" value="ordered" data-tooltip="Ordered List" />
+    <button className="ql-list" value="bullet" data-tooltip="Bullet List" />
+    <button className="ql-align" value="" data-tooltip="Align Left" />
+    <button className="ql-align" value="center" data-tooltip="Align Center" />
+    <button className="ql-align" value="right" data-tooltip="Align Right" />
+    <button className="ql-image" data-tooltip="Insert Image" />
+    <button className="ql-clean" data-tooltip="Clear Formatting" />
+    <button className="ql-blank" data-tooltip="Insert Blank">
       <svg width="18" height="18" viewBox="0 0 18 18">
         <rect x="3" y="8" width="12" height="2" rx="1" fill="#444" />
       </svg>
     </button>
-    <button className="ql-clean" />
   </div>
 );
 
@@ -37,6 +39,8 @@ const modules = {
   toolbar: {
     container: '#custom-toolbar',
     handlers: {
+      // Using any here because Quill's type definitions don't properly expose the toolbar handler context
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       image: function (this: any) {
         const quill = this.quill;
         const url = window.prompt('Enter image URL');
@@ -45,6 +49,8 @@ const modules = {
           quill.insertEmbed(range ? range.index : 0, 'image', url, 'user');
         }
       },
+      // Using any here because Quill's type definitions don't properly expose the toolbar handler context
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       blank: function (this: any) {
         const quill = this.quill;
         const range = quill.getSelection();
@@ -57,17 +63,15 @@ const modules = {
   },
 };
 
-const formats = [
-  'header', 'bold', 'italic', 'underline',
-  'align', 'list', 'bullet', 'image'
-];
+const formats = ['header', 'bold', 'italic', 'underline', 'align', 'list', 'bullet', 'image'];
 
 const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
   const quillRef = useRef<ReactQuill | null>(null);
 
   return (
     <div style={{ background: '#23243a', borderRadius: 8 }}>
-      <CustomToolbar />
+      <CustomToolbar /> 
+      {/* for tootips */}
       <style>{`
         .ql-editor img {
           display: block;
@@ -79,6 +83,29 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
           border-radius: 10px;
           object-fit: contain;
           box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+        }
+
+        [data-tooltip] {
+          position: relative;
+        }
+
+        [data-tooltip]:hover::after {
+          content: attr(data-tooltip);
+          position: absolute;
+          top: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(0, 0, 0, 0.75);
+          color: white;
+          padding: 4px 8px;
+          font-size: 12px;
+          border-radius: 4px;
+          white-space: nowrap;
+          z-index: 100;
+        }
+
+        .ql-toolbar button, .ql-toolbar select {
+          margin-right: 4px;
         }
       `}</style>
       <ReactQuill
@@ -94,4 +121,4 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
   );
 };
 
-export default WysiwygEditor; 
+export default WysiwygEditor;
