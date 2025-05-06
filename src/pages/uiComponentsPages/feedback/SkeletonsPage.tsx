@@ -222,7 +222,7 @@ const QuizSection: React.FC = () => {
   };
 
   const handleReset = () => {
-    setQuestion('Pilih jawapan yang betul.');
+    setQuestion('Choose the correct answer.');
     setAnswers([
       { label: 'A', value: '' },
       { label: 'B', value: '' },

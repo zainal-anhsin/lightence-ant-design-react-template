@@ -73,6 +73,10 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
       <CustomToolbar /> 
       {/* for tootips */}
       <style>{`
+        .ql-editor {
+          font-family: 'Montserrat', 'Segoe UI', 'Arial', sans-serif;
+          color: #f3f3f3;
+        }
         .ql-editor img {
           display: block;
           margin: 16px auto;
