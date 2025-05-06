@@ -7,9 +7,11 @@ import * as S from '@app/pages/uiComponentsPages//UIComponentsPage.styles';
 import { media } from '@app/styles/themes/constants';
 import { BaseForm } from '@app/components/common/forms/BaseForm/BaseForm';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
+import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
 import { BaseRadio } from '@app/components/common/BaseRadio/BaseRadio';
 import { BaseInput } from '@app/components/common/inputs/BaseInput/BaseInput';
 import { BaseButton } from '@app/components/common/BaseButton/BaseButton';
+import { BaseFormItem } from '@app/components/common/forms/components/BaseFormItem/BaseFormItem';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import WysiwygEditor from './wysiwyg/WysiwygEditor';
 
@@ -70,30 +72,42 @@ const QuizContent = styled.div`
   min-width: 320px;
 `;
 
-const AnswerOption = styled.div`
-  display: flex;
-  align-items: center;
+const AnswerOptionWrapper = styled(BaseRow)`
   margin-bottom: 8px;
+  align-items: center;
 `;
 
-const SetCorrectButton = styled.button<{
-  selected: boolean;
-}>`
+const AnswerLabel = styled.span<{ $isCorrect: boolean }>`
+  width: 20px;
+  display: inline-block;
+  color: #b6eaff;
+  font-weight: ${(props) => (props.$isCorrect ? 600 : 400)};
+`;
+
+const AnswerInput = styled(BaseInput)`
+  flex: 1;
+  margin-left: 8px;
+`;
+
+const SetCorrectButton = styled(BaseButton)<{ $selected: boolean }>`
   margin-left: 12px;
-  background: ${({ selected }) => (selected ? '#1890ff' : '#23243a')};
-  color: ${({ selected }) => (selected ? '#fff' : '#b6eaff')};
+  background: ${({ $selected }) => ($selected ? '#1890ff' : '#23243a')};
+  color: ${({ $selected }) => ($selected ? '#fff' : '#b6eaff')};
   border: 1px solid #1890ff;
-  border-radius: 4px;
-  padding: 2px 10px;
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  transition: background 0.2s, color 0.2s;
   &:hover {
     background: #1890ff;
     color: #fff;
   }
+`;
+
+const DeleteButton = styled(BaseButton)`
+  margin-left: 8px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
 `;
 
 const RichContentPreview = styled.div`
@@ -128,6 +142,27 @@ const RichContentPreview = styled.div`
     object-fit: contain;
     box-shadow: 0 2px 12px rgba(0,0,0,0.10);
   }
+`;
+
+const PreviewAnswer = styled.div<{ $isCorrect: boolean }>`
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  background: ${({ $isCorrect }) => ($isCorrect ? '#2a3b4d' : undefined)};
+  border-radius: 4px;
+  padding: ${({ $isCorrect }) => ($isCorrect ? '2px 8px' : undefined)};
+  color: ${({ $isCorrect }) => ($isCorrect ? '#b6eaff' : '#b0b0b0')};
+  font-weight: ${({ $isCorrect }) => ($isCorrect ? 600 : 400)};
+  opacity: 0.9;
+`;
+
+const PreviewLabel = styled.span`
+  font-weight: bold;
+  width: 20px;
+`;
+
+const PreviewText = styled.span`
+  margin-left: 8px;
 `;
 
 const SkeletonsPage: React.FC = () => {
@@ -203,99 +238,81 @@ const QuizSection: React.FC = () => {
       <SectionWithTitle style={{ marginRight: 32 }}>
         <SectionTitle>Preview</SectionTitle>
         <SectionBox>
-          {/* Render the WYSIWYG HTML using styled RichContentPreview */}
           {question && (
             <RichContentPreview
               style={{ marginBottom: 16 }}
               dangerouslySetInnerHTML={{ __html: question }}
             />
           )}
-          {/* Render answer options, highlight the correct one */}
           <div>
-            {answers.map((ans, idx) => (
-              <div key={ans.label} style={{
-                display: 'flex', alignItems: 'center', marginBottom: 8,
-                background: correct === ans.label ? '#2a3b4d' : undefined,
-                borderRadius: 4, padding: correct === ans.label ? '2px 8px' : undefined,
-                color: correct === ans.label ? '#b6eaff' : '#b0b0b0',
-                fontWeight: correct === ans.label ? 600 : 400,
-                opacity: ans.value ? 1 : 0.7
-              }}>
-                <span style={{ fontWeight: 'bold', width: 20 }}>{ans.label}</span>
-                <span style={{ marginLeft: 8 }}>{ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}</span>
+            {answers.map((ans) => (
+              <PreviewAnswer key={ans.label} $isCorrect={correct === ans.label}>
+                <PreviewLabel>{ans.label}</PreviewLabel>
+                <PreviewText>
+                  {ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}
+                </PreviewText>
                 {correct === ans.label && (
                   <CheckOutlined style={{ color: '#52c41a', marginLeft: 8, fontSize: 18 }} />
                 )}
-              </div>
+              </PreviewAnswer>
             ))}
           </div>
         </SectionBox>
       </SectionWithTitle>
+
       {/* --- Content Section (right) --- */}
       <SectionWithTitle style={{ marginRight: 0 }}>
         <SectionTitle>Content</SectionTitle>
         <SectionBox>
           <BaseForm layout="vertical">
-            {/* --- WYSIWYG Editor for question/content --- */}
-            <BaseForm.Item label="Question/Content">
-              {/* This is the main rich text editor for the question */}
+            <BaseFormItem label="Question/Content">
               <WysiwygEditor value={question} onChange={setQuestion} />
-            </BaseForm.Item>
-            {/* --- Editable answer options --- */}
-            <BaseForm.Item label="Edit Answers & Options">
+            </BaseFormItem>
+
+            <BaseFormItem label="Edit Answers & Options">
               {answers.map((ans, idx) => (
-                <AnswerOption key={ans.label}>
-                  <span style={{ width: 20, display: 'inline-block', color: '#b6eaff', fontWeight: correct === ans.label ? 600 : 400 }}>{ans.label}</span>
-                  {/* Input for answer text */}
-                  <BaseInput
+                <AnswerOptionWrapper key={ans.label}>
+                  <AnswerLabel $isCorrect={correct === ans.label}>{ans.label}</AnswerLabel>
+                  <AnswerInput
                     value={ans.value}
                     onChange={(e: any) => handleAnswerChange(idx, e.target.value)}
                     placeholder={`Option ${ans.label}`}
-                    style={{ flex: 1, marginLeft: 8 }}
                   />
-                  {/* Button to set this answer as correct */}
                   <SetCorrectButton
-                    type="button"
-                    selected={correct === ans.label}
+                    type="default"
+                    $selected={correct === ans.label}
                     onClick={() => setCorrect(ans.label)}
-                    aria-label={`Set ${ans.label} as correct answer`}
                   >
                     {correct === ans.label && <CheckOutlined style={{ marginRight: 4 }} />}
                     {correct === ans.label ? 'Correct' : 'Set as Correct'}
                   </SetCorrectButton>
-                  {/* Delete button */}
-                  <BaseButton
+                  <DeleteButton
                     type="text"
                     danger
                     icon={<CloseOutlined />}
                     onClick={() => handleDeleteAnswer(idx)}
                     disabled={answers.length <= 2}
-                    style={{ marginLeft: 8 }}
-                    aria-label={`Delete option ${ans.label}`}
                   />
-                </AnswerOption>
+                </AnswerOptionWrapper>
               ))}
               <div style={{ color: '#888', fontSize: 12, marginTop: 8 }}>
                 Click the button to mark the correct answer.
               </div>
-              {/* Add button to add more answers */}
               <div style={{ marginTop: '16px' }}>
                 <BaseButton type="dashed" onClick={handleAddAnswer} block>
                   {t('Add Option')}
                 </BaseButton>
               </div>
-            </BaseForm.Item>
-            {/* Add Save and Reset buttons */}
-            <BaseForm.Item>
-              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-                <BaseButton type="primary" onClick={handleSave}>
-                  {t('common.save')}
-                </BaseButton>
-                <BaseButton type="ghost" onClick={handleReset}>
-                  {t('Reset')}
-                </BaseButton>
-              </div>
-            </BaseForm.Item>
+            </BaseFormItem>
+
+            <ButtonGroup>
+              <BaseButton type="primary" onClick={handleSave}>
+                {t('common.save')}
+              </BaseButton>
+              <BaseButton type="ghost" onClick={handleReset}>
+                {t('Reset')}
+              </BaseButton>
+            </ButtonGroup>
           </BaseForm>
         </SectionBox>
       </SectionWithTitle>
