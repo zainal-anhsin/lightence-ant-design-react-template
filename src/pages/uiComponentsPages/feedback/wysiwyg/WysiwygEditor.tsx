@@ -22,9 +22,12 @@ const CustomToolbar = () => (
     <button className="ql-underline" data-tooltip="Underline" />
     <button className="ql-list" value="ordered" data-tooltip="Ordered List" />
     <button className="ql-list" value="bullet" data-tooltip="Bullet List" />
-    <button className="ql-align" value="" data-tooltip="Align Left" />
-    <button className="ql-align" value="center" data-tooltip="Align Center" />
-    <button className="ql-align" value="right" data-tooltip="Align Right" />
+    <select className="ql-align" defaultValue="" data-tooltip="Align">
+      <option value="" />
+      <option value="center" />
+      <option value="right" />
+      <option value="justify" />
+    </select>
     <button className="ql-image" data-tooltip="Insert Image" />
     <button className="ql-clean" data-tooltip="Clear Formatting" />
     <button className="ql-blank" data-tooltip="Insert Blank">
@@ -55,8 +58,8 @@ const modules = {
         const quill = this.quill;
         const range = quill.getSelection();
         if (range) {
-          quill.insertText(range.index, '________ ', 'user');
-          quill.setSelection(range.index + 9, 0, 'user');
+          quill.insertText(range.index, ' ________ ', 'user');
+          quill.setSelection(range.index + 10, 0, 'user');
         }
       },
     },

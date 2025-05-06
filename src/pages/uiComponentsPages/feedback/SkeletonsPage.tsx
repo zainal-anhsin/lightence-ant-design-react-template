@@ -33,10 +33,10 @@ const QuizSectionWrapper = styled.div`
   margin-top: 32px;
 `;
 
-const SectionWithTitle = styled.div`
+const SectionWithTitle = styled.div<{ $width?: string }>`
   display: flex;
   flex-direction: column;
-  flex: 1;
+  width: ${({ $width }) => $width || '50%'};
   min-width: 320px;
   margin-right: 32px;
 `;
@@ -108,6 +108,7 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: 12px;
   margin-top: 24px;
+  justify-content: flex-end;
 `;
 
 const RichContentPreview = styled.div`
@@ -131,6 +132,7 @@ const RichContentPreview = styled.div`
   .ql-align-center { text-align: center; }
   .ql-align-right { text-align: right; }
   .ql-align-left { text-align: left; }
+  .ql-align-justify { text-align: justify; }
   img {
     display: block;
     margin: 16px auto;
@@ -235,7 +237,7 @@ const QuizSection: React.FC = () => {
   return (
     <QuizSectionWrapper>
       {/* --- Preview Section (left) --- */}
-      <SectionWithTitle style={{ marginRight: 32 }}>
+      <SectionWithTitle $width="40%" style={{ marginRight: 20 }}>
         <SectionTitle>Preview</SectionTitle>
         <SectionBox>
           {question && (
@@ -261,7 +263,7 @@ const QuizSection: React.FC = () => {
       </SectionWithTitle>
 
       {/* --- Content Section (right) --- */}
-      <SectionWithTitle style={{ marginRight: 0 }}>
+      <SectionWithTitle $width="60%" style={{ marginRight: 0 }}>
         <SectionTitle>Content</SectionTitle>
         <SectionBox>
           <BaseForm layout="vertical">
@@ -300,7 +302,7 @@ const QuizSection: React.FC = () => {
               </div>
               <div style={{ marginTop: '16px' }}>
                 <BaseButton type="dashed" onClick={handleAddAnswer} block>
-                  {t('Add Option')}
+                  {t('Add Answer Option')}
                 </BaseButton>
               </div>
             </BaseFormItem>
