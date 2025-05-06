@@ -14,158 +14,27 @@ import { BaseButton } from '@app/components/common/BaseButton/BaseButton';
 import { BaseFormItem } from '@app/components/common/forms/components/BaseFormItem/BaseFormItem';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import WysiwygEditor from './wysiwyg/WysiwygEditor';
+import {
+  AnswerOptionWrapper,
+  AnswerLabel,
+  AnswerInput,
+  SetCorrectButton,
+  DeleteButton,
+  ButtonGroup,
+  RichContentPreview,
+  PreviewAnswer,
+  PreviewLabel,
+  PreviewText,
+  FormItem,
+  QuizSectionWrapper,
+  SectionWithTitle,
+  SectionTitle,
+  SectionBox,
+  QuizPreview,
+  QuizContent,
+} from './wysiwyg/quizComponents';
 
 type Size = 'default' | 'large' | 'small';
-
-const FormItem = styled(BaseForm.Item)`
-  @media only screen and ${media.xs} {
-    max-width: fit-content;
-  }
-
-  @media only screen and ${media.md} {
-    max-width: 100%;
-  }
-`;
-
-const QuizSectionWrapper = styled.div`
-  display: flex;
-  gap: 32px;
-  margin-top: 32px;
-`;
-
-const SectionWithTitle = styled.div<{ $width?: string }>`
-  display: flex;
-  flex-direction: column;
-  width: ${({ $width }) => $width || '50%'};
-  min-width: 320px;
-  margin-right: 32px;
-`;
-
-const SectionTitle = styled.h3`
-  color: #e0e0e0;
-  font-weight: 500;
-  margin-bottom: 18px;
-  margin-left: 8px;
-`;
-
-const SectionBox = styled.div`
-  border-radius: 8px;
-  padding: 24px;
-  background: #23243a;
-  color: #f3f3f3;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  min-height: 100px;
-`;
-
-const QuizPreview = styled.div`
-  flex: 1;
-  min-width: 320px;
-  border-radius: 8px;
-  padding: 24px;
-  background: #23243a;
-  color: #f3f3f3;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-`;
-
-const QuizContent = styled.div`
-  flex: 1;
-  min-width: 320px;
-`;
-
-const AnswerOptionWrapper = styled(BaseRow)`
-  margin-bottom: 8px;
-  align-items: center;
-`;
-
-const AnswerLabel = styled.span<{ $isCorrect: boolean }>`
-  width: 20px;
-  display: inline-block;
-  color: #b6eaff;
-  font-weight: ${(props) => (props.$isCorrect ? 600 : 400)};
-`;
-
-const AnswerInput = styled(BaseInput)`
-  flex: 1;
-  margin-left: 8px;
-`;
-
-const SetCorrectButton = styled(BaseButton)<{ $selected: boolean }>`
-  margin-left: 12px;
-  background: ${({ $selected }) => ($selected ? '#1890ff' : '#23243a')};
-  color: ${({ $selected }) => ($selected ? '#fff' : '#b6eaff')};
-  border: 1px solid #1890ff;
-  &:hover {
-    background: #1890ff;
-    color: #fff;
-  }
-`;
-
-const DeleteButton = styled(BaseButton)`
-  margin-left: 8px;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-  justify-content: flex-end;
-`;
-
-const RichContentPreview = styled.div`
-  h1, h2 {
-    color: #f3f3f3;
-    font-weight: bold;
-    margin-bottom: 0.5em;
-  }
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.5rem; }
-  p {
-    color: #f3f3f3;
-    margin-bottom: 0.75em;
-  }
-  ul, ol {
-    margin-left: 1.5em;
-    color: #f3f3f3;
-  }
-  strong { font-weight: bold; }
-  em { font-style: italic; }
-  .ql-align-center { text-align: center; }
-  .ql-align-right { text-align: right; }
-  .ql-align-left { text-align: left; }
-  .ql-align-justify { text-align: justify; }
-  img {
-    display: block;
-    margin: 16px auto;
-    max-width: 380px;
-    max-height: 320px;
-    width: auto;
-    height: auto;
-    border-radius: 10px;
-    object-fit: contain;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-  }
-`;
-
-const PreviewAnswer = styled.div<{ $isCorrect: boolean }>`
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  background: ${({ $isCorrect }) => ($isCorrect ? '#2a3b4d' : undefined)};
-  border-radius: 4px;
-  padding: ${({ $isCorrect }) => ($isCorrect ? '2px 8px' : undefined)};
-  color: ${({ $isCorrect }) => ($isCorrect ? '#b6eaff' : '#b0b0b0')};
-  font-weight: ${({ $isCorrect }) => ($isCorrect ? 600 : 400)};
-  opacity: 0.9;
-`;
-
-const PreviewLabel = styled.span`
-  font-weight: bold;
-  width: 20px;
-`;
-
-const PreviewText = styled.span`
-  margin-left: 8px;
-`;
 
 const SkeletonsPage: React.FC = () => {
   const { t } = useTranslation();
