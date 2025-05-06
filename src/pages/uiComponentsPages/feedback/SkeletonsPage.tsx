@@ -9,7 +9,8 @@ import { BaseForm } from '@app/components/common/forms/BaseForm/BaseForm';
 import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
 import { BaseRadio } from '@app/components/common/BaseRadio/BaseRadio';
 import { BaseInput } from '@app/components/common/inputs/BaseInput/BaseInput';
-import { CheckOutlined } from '@ant-design/icons';
+import { BaseButton } from '@app/components/common/BaseButton/BaseButton';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import WysiwygEditor from './wysiwyg/WysiwygEditor';
 
 type Size = 'default' | 'large' | 'small';
@@ -141,7 +142,8 @@ const SkeletonsPage: React.FC = () => {
 };
 
 const QuizSection: React.FC = () => {
-  const [question, setQuestion] = useState('Pilih jawapan yang betul.');
+  const { t } = useTranslation();
+  const [question, setQuestion] = useState('Choose the correct answer.');
   const [answers, setAnswers] = useState([
     { label: 'A', value: '' },
     { label: 'B', value: '' },
@@ -152,6 +154,47 @@ const QuizSection: React.FC = () => {
 
   const handleAnswerChange = (idx: number, value: string) => {
     setAnswers((prev) => prev.map((a, i) => (i === idx ? { ...a, value } : a)));
+  };
+
+  const handleAddAnswer = () => {
+    const newLabel = String.fromCharCode(65 + answers.length); // Convert number to letter (A, B, C, etc.)
+    setAnswers([...answers, { label: newLabel, value: '' }]);
+  };
+
+  const handleDeleteAnswer = (indexToDelete: number) => {
+    if (answers.length <= 2) return; // Prevent deletion if only 2 options remain
+
+    // Remove the answer at the specified index
+    const newAnswers = answers.filter((_, index) => index !== indexToDelete);
+    
+    // Update labels to be sequential
+    const updatedAnswers = newAnswers.map((answer, index) => ({
+      ...answer,
+      label: String.fromCharCode(65 + index) // A, B, C, etc.
+    }));
+
+    setAnswers(updatedAnswers);
+
+    // If the deleted answer was the correct one, set the first answer as correct
+    if (correct === answers[indexToDelete].label) {
+      setCorrect(updatedAnswers[0].label);
+    }
+  };
+
+  const handleSave = () => {
+    // TODO: Implement save functionality
+    console.log('Saving quiz:', { question, answers, correct });
+  };
+
+  const handleReset = () => {
+    setQuestion('Pilih jawapan yang betul.');
+    setAnswers([
+      { label: 'A', value: '' },
+      { label: 'B', value: '' },
+      { label: 'C', value: '' },
+      { label: 'D', value: '' },
+    ]);
+    setCorrect('A');
   };
 
   return (
@@ -220,10 +263,37 @@ const QuizSection: React.FC = () => {
                     {correct === ans.label && <CheckOutlined style={{ marginRight: 4 }} />}
                     {correct === ans.label ? 'Correct' : 'Set as Correct'}
                   </SetCorrectButton>
+                  {/* Delete button */}
+                  <BaseButton
+                    type="text"
+                    danger
+                    icon={<CloseOutlined />}
+                    onClick={() => handleDeleteAnswer(idx)}
+                    disabled={answers.length <= 2}
+                    style={{ marginLeft: 8 }}
+                    aria-label={`Delete option ${ans.label}`}
+                  />
                 </AnswerOption>
               ))}
               <div style={{ color: '#888', fontSize: 12, marginTop: 8 }}>
                 Click the button to mark the correct answer.
+              </div>
+              {/* Add button to add more answers */}
+              <div style={{ marginTop: '16px' }}>
+                <BaseButton type="dashed" onClick={handleAddAnswer} block>
+                  {t('Add Option')}
+                </BaseButton>
+              </div>
+            </BaseForm.Item>
+            {/* Add Save and Reset buttons */}
+            <BaseForm.Item>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <BaseButton type="primary" onClick={handleSave}>
+                  {t('common.save')}
+                </BaseButton>
+                <BaseButton type="ghost" onClick={handleReset}>
+                  {t('Reset')}
+                </BaseButton>
               </div>
             </BaseForm.Item>
           </BaseForm>
