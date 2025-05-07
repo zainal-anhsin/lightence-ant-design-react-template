@@ -24,6 +24,7 @@ export const AnswerInput = styled(BaseInput)`
 
 export const SetCorrectButton = styled(BaseButton)<{ $selected: boolean }>`
   margin-left: 12px;
+  width: 140px;
   background: ${({ $selected }) => ($selected ? '#1890ff' : '#23243a')};
   color: ${({ $selected }) => ($selected ? '#fff' : '#b6eaff')};
   border: 1px solid #1890ff;
@@ -37,10 +38,20 @@ export const DeleteButton = styled(BaseButton)`
   margin-left: 8px;
 `;
 
+export const AddAnswerButton = styled(BaseButton)`
+  width: 140px;
+  border-color: #1890ff;
+  background: #23243a;
+  color: #b6eaff;
+  &:hover {
+    background: #1890ff;
+    color: #fff;
+  }
+`;
+
 export const ButtonGroup = styled.div`
   display: flex;
   gap: 12px;
-  margin-top: 24px;
   justify-content: flex-end;
 `;
 
@@ -113,6 +124,8 @@ export const QuizSectionWrapper = styled.div`
   display: flex;
   gap: 32px;
   margin-top: 32px;
+  align-items: stretch;
+  height: 100%;
 `;
 
 export const SectionWithTitle = styled.div<{ $width?: string }>`
@@ -121,6 +134,7 @@ export const SectionWithTitle = styled.div<{ $width?: string }>`
   width: ${({ $width }) => $width || '50%'};
   min-width: 320px;
   margin-right: 32px;
+  height: 100%;
 `;
 
 export const SectionTitle = styled.h3`
@@ -132,11 +146,14 @@ export const SectionTitle = styled.h3`
 
 export const SectionBox = styled.div`
   border-radius: 8px;
-  padding: 24px;
+  padding: 24px 24px 4px 24px;
   background: #23243a;
   color: #f3f3f3;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   min-height: 100px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const QuizPreview = styled.div`
@@ -152,4 +169,49 @@ export const QuizPreview = styled.div`
 export const QuizContent = styled.div`
   flex: 1;
   min-width: 320px;
+`;
+
+export const QuestionListWrapper = styled.div`
+  background: #23243a;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+`;
+
+export const QuestionListTitle = styled.h3`
+  color: #f3f3f3;
+  font-weight: 600;
+  margin-bottom: 18px;
+  margin-left: 8px;
+`;
+
+export const QuestionNumbersGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+`;
+
+export const QuestionNumberButton = styled.button<{ $active?: boolean }>`
+  background: ${({ $active }) => ($active ? '#7c3aed' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#fff' : '#f3f3f3')};
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  &:hover {
+    background: #7c3aed;
+    color: #fff;
+  }
+`;
+
+export const QuestionListActions = styled.div`
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 12px;
 `;

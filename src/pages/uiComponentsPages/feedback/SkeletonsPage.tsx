@@ -12,7 +12,7 @@ import { BaseRadio } from '@app/components/common/BaseRadio/BaseRadio';
 import { BaseInput } from '@app/components/common/inputs/BaseInput/BaseInput';
 import { BaseButton } from '@app/components/common/BaseButton/BaseButton';
 import { BaseFormItem } from '@app/components/common/forms/components/BaseFormItem/BaseFormItem';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import WysiwygEditor from './wysiwyg/WysiwygEditor';
 import {
   AnswerOptionWrapper,
@@ -32,9 +32,54 @@ import {
   SectionBox,
   QuizPreview,
   QuizContent,
+  QuestionListWrapper,
+  QuestionListTitle,
+  QuestionNumbersGrid,
+  QuestionNumberButton,
+  QuestionListActions,
+  AddAnswerButton,
 } from './wysiwyg/quizComponents';
 
 type Size = 'default' | 'large' | 'small';
+
+const QuestionListSection: React.FC = () => {
+  const [questions, setQuestions] = React.useState<number[]>(Array.from({ length: 10 }, (_, i) => i + 1));
+
+  const handleAddQuestion = () => {
+    setQuestions((prev) => [...prev, prev.length + 1]);
+  };
+
+  const handleRemoveQuestion = () => {
+    if (questions.length > 1) {
+      setQuestions((prev) => prev.slice(0, -1));
+    }
+  };
+
+  return (
+    <>
+      <QuestionListTitle>Question List</QuestionListTitle>
+      <QuestionListWrapper>
+        <QuestionNumbersGrid>
+          {questions.map((num) => (
+            <QuestionNumberButton key={num}>{num}</QuestionNumberButton>
+          ))}
+        </QuestionNumbersGrid>
+        <QuestionListActions>
+          <DeleteButton
+            type="default"
+            onClick={handleRemoveQuestion}
+            disabled={questions.length <= 1}
+          >
+            - Remove Question
+          </DeleteButton>
+          <SetCorrectButton type="primary" $selected={false} onClick={handleAddQuestion}>
+            + Add Question
+          </SetCorrectButton>
+        </QuestionListActions>
+      </QuestionListWrapper>
+    </>
+  );
+};
 
 const SkeletonsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -72,11 +117,11 @@ const QuizSection: React.FC = () => {
 
     // Remove the answer at the specified index
     const newAnswers = answers.filter((_, index) => index !== indexToDelete);
-    
+
     // Update labels to be sequential
     const updatedAnswers = newAnswers.map((answer, index) => ({
       ...answer,
-      label: String.fromCharCode(65 + index) // A, B, C, etc.
+      label: String.fromCharCode(65 + index), // A, B, C, etc.
     }));
 
     setAnswers(updatedAnswers);
@@ -105,29 +150,31 @@ const QuizSection: React.FC = () => {
 
   return (
     <QuizSectionWrapper>
-      {/* --- Preview Section (left) --- */}
+      {/* --- Left Section: Question List + Preview --- */}
       <SectionWithTitle $width="40%" style={{ marginRight: 20 }}>
+        <QuestionListSection />
         <SectionTitle>Preview</SectionTitle>
         <SectionBox>
           {question && (
-            <RichContentPreview
-              style={{ marginBottom: 16 }}
-              dangerouslySetInnerHTML={{ __html: question }}
-            />
+            <RichContentPreview style={{ marginBottom: 16 }} dangerouslySetInnerHTML={{ __html: question }} />
           )}
           <div>
             {answers.map((ans) => (
               <PreviewAnswer key={ans.label} $isCorrect={correct === ans.label}>
                 <PreviewLabel>{ans.label}</PreviewLabel>
-                <PreviewText>
-                  {ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}
-                </PreviewText>
-                {correct === ans.label && (
-                  <CheckOutlined style={{ color: '#52c41a', marginLeft: 8, fontSize: 18 }} />
-                )}
+                <PreviewText>{ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}</PreviewText>
+                {correct === ans.label && <CheckOutlined style={{ color: '#52c41a', marginLeft: 8, fontSize: 18 }} />}
               </PreviewAnswer>
             ))}
           </div>
+          <ButtonGroup style={{ marginTop: 32 }}>
+            <BaseButton type="primary" onClick={handleSave}>
+              {t('common.save')}
+            </BaseButton>
+            <BaseButton type="ghost" onClick={handleReset}>
+              {t('Reset')}
+            </BaseButton>
+          </ButtonGroup>
         </SectionBox>
       </SectionWithTitle>
 
@@ -136,7 +183,7 @@ const QuizSection: React.FC = () => {
         <SectionTitle>Content</SectionTitle>
         <SectionBox>
           <BaseForm layout="vertical">
-            <BaseFormItem label="Question/Content">
+            <BaseFormItem>
               <WysiwygEditor value={question} onChange={setQuestion} />
             </BaseFormItem>
 
@@ -166,24 +213,19 @@ const QuizSection: React.FC = () => {
                   />
                 </AnswerOptionWrapper>
               ))}
-              <div style={{ color: '#888', fontSize: 12, marginTop: 8 }}>
-                Click the button to mark the correct answer.
-              </div>
-              <div style={{ marginTop: '16px' }}>
-                <BaseButton type="dashed" onClick={handleAddAnswer} block>
-                  {t('Add Answer Option')}
-                </BaseButton>
-              </div>
+              <AnswerOptionWrapper style={{ marginTop: 12, marginRight: 17 }}>
+                <AnswerLabel $isCorrect={false} />
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#888', fontSize: 12, marginLeft: 8 }}>
+                    *Click the button to mark the correct answer and click the X button to remove the answer*
+                  </span>
+                </div>
+                <AddAnswerButton type="dashed" onClick={handleAddAnswer}>
+                  {t('+ Add Answer')}
+                </AddAnswerButton>
+                <div style={{ width: 40 }} /> {/* acts like the delete button space */}
+              </AnswerOptionWrapper>
             </BaseFormItem>
-
-            <ButtonGroup>
-              <BaseButton type="primary" onClick={handleSave}>
-                {t('common.save')}
-              </BaseButton>
-              <BaseButton type="ghost" onClick={handleReset}>
-                {t('Reset')}
-              </BaseButton>
-            </ButtonGroup>
           </BaseForm>
         </SectionBox>
       </SectionWithTitle>

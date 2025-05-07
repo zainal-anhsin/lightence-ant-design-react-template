@@ -79,6 +79,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
         .ql-editor {
           font-family: 'Montserrat', 'Segoe UI', 'Arial', sans-serif;
           color: #f3f3f3;
+          min-height: 100px;
         }
         .ql-editor img {
           display: block;
