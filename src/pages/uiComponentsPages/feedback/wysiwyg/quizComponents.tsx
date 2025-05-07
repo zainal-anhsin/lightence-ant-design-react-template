@@ -40,6 +40,7 @@ export const DeleteButton = styled(BaseButton)`
 
 export const AddAnswerButton = styled(BaseButton)`
   width: 140px;
+  margin-left: 28px;
   border-color: #1890ff;
   background: #23243a;
   color: #b6eaff;
@@ -56,27 +57,45 @@ export const ButtonGroup = styled.div`
 `;
 
 export const RichContentPreview = styled.div`
-  h1, h2 {
+  h1,
+  h2 {
     color: #f3f3f3;
     font-weight: bold;
     margin-bottom: 0.5em;
   }
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.5rem; }
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
   p {
     color: #f3f3f3;
     margin-bottom: 0.75em;
   }
-  ul, ol {
+  ul,
+  ol {
     margin-left: 1.5em;
     color: #f3f3f3;
   }
-  strong { font-weight: bold; }
-  em { font-style: italic; }
-  .ql-align-center { text-align: center; }
-  .ql-align-right { text-align: right; }
-  .ql-align-left { text-align: left; }
-  .ql-align-justify { text-align: justify; }
+  strong {
+    font-weight: bold;
+  }
+  em {
+    font-style: italic;
+  }
+  .ql-align-center {
+    text-align: center;
+  }
+  .ql-align-right {
+    text-align: right;
+  }
+  .ql-align-left {
+    text-align: left;
+  }
+  .ql-align-justify {
+    text-align: justify;
+  }
   img {
     display: block;
     margin: 16px auto;
@@ -86,13 +105,13 @@ export const RichContentPreview = styled.div`
     height: auto;
     border-radius: 10px;
     object-fit: contain;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   }
 `;
 
 export const PreviewAnswer = styled.div<{ $isCorrect: boolean }>`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 8px;
   background: ${({ $isCorrect }) => ($isCorrect ? '#2a3b4d' : undefined)};
   border-radius: 4px;
@@ -100,15 +119,27 @@ export const PreviewAnswer = styled.div<{ $isCorrect: boolean }>`
   color: ${({ $isCorrect }) => ($isCorrect ? '#b6eaff' : '#b0b0b0')};
   font-weight: ${({ $isCorrect }) => ($isCorrect ? 600 : 400)};
   opacity: 0.9;
+  width: 100%;
+  word-break: break-word;
 `;
 
 export const PreviewLabel = styled.span`
   font-weight: bold;
-  width: 20px;
+  width: 28px;
+  min-width: 28px;
+  text-align: left;
+  margin-top: 2px;
 `;
 
 export const PreviewText = styled.span`
   margin-left: 8px;
+  display: block;
+  text-align: left;
+  white-space: pre-line;
+  word-break: break-word;
+  flex: 1;
+  overflow-wrap: break-word;
+  text-align: justify;
 `;
 
 export const FormItem = styled(BaseForm.Item)`
@@ -149,7 +180,7 @@ export const SectionBox = styled.div`
   padding: 24px 24px 4px 24px;
   background: #23243a;
   color: #f3f3f3;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   min-height: 100px;
   flex: 1;
   display: flex;
@@ -163,7 +194,7 @@ export const QuizPreview = styled.div`
   padding: 24px;
   background: #23243a;
   color: #f3f3f3;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `;
 
 export const QuizContent = styled.div`
@@ -176,7 +207,7 @@ export const QuestionListWrapper = styled.div`
   border-radius: 8px;
   padding: 24px;
   margin-bottom: 32px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 `;
 
 export const QuestionListTitle = styled.h3`
@@ -212,6 +243,10 @@ export const QuestionNumberButton = styled.button<{ $active?: boolean }>`
 export const QuestionListActions = styled.div`
   display: flex;
   gap: 12px;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 12px;
+`;
+
+export const QuestionListButton = styled(BaseButton)`
+  width: 160px;
 `;

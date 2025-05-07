@@ -38,6 +38,7 @@ import {
   QuestionNumberButton,
   QuestionListActions,
   AddAnswerButton,
+  QuestionListButton,
 } from './wysiwyg/quizComponents';
 
 type Size = 'default' | 'large' | 'small';
@@ -65,16 +66,12 @@ const QuestionListSection: React.FC = () => {
           ))}
         </QuestionNumbersGrid>
         <QuestionListActions>
-          <DeleteButton
-            type="default"
-            onClick={handleRemoveQuestion}
-            disabled={questions.length <= 1}
-          >
-            - Remove Question
-          </DeleteButton>
-          <SetCorrectButton type="primary" $selected={false} onClick={handleAddQuestion}>
+          <QuestionListButton type="primary" onClick={handleAddQuestion}>
             + Add Question
-          </SetCorrectButton>
+          </QuestionListButton>
+          <QuestionListButton type="default" onClick={handleRemoveQuestion} disabled={questions.length <= 1}>
+            <MinusOutlined /> Remove
+          </QuestionListButton>
         </QuestionListActions>
       </QuestionListWrapper>
     </>
@@ -167,7 +164,7 @@ const QuizSection: React.FC = () => {
               </PreviewAnswer>
             ))}
           </div>
-          <ButtonGroup style={{ marginTop: 32 }}>
+          <ButtonGroup style={{ marginTop: 14 }}>
             <BaseButton type="primary" onClick={handleSave}>
               {t('common.save')}
             </BaseButton>
