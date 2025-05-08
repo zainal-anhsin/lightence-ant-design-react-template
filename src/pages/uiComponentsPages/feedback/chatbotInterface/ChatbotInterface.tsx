@@ -9,11 +9,11 @@ const FloatingChatbotWrapper = styled.div<{ $expanded: boolean }>`
   bottom: 0px;
   right: 32px;
   z-index: 1000;
-  width: 700px;
+  width: 500px;
   background: #111216;
   border-radius: 16px 16px 0 0;
-  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.45);
-  transition: height 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s;
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.45);
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
   height: ${({ $expanded }) => ($expanded ? '420px' : '56px')};
   overflow: hidden;
   display: flex;
@@ -106,7 +106,7 @@ const ChatbotInterface: React.FC = () => {
 
     // Add user message to chat
     const userMessage: Message = { text: inputMessage, isUser: true };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
 
@@ -126,15 +126,15 @@ const ChatbotInterface: React.FC = () => {
       const data = await response.text();
       // Add AI response to chat
       const aiMessage: Message = { text: data, isUser: false };
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       // Add error message to chat
       const errorMessage: Message = {
         text: 'Sorry, I encountered an error. Please try again.',
-        isUser: false
+        isUser: false,
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -149,23 +149,26 @@ const ChatbotInterface: React.FC = () => {
 
   return (
     <FloatingChatbotWrapper $expanded={expanded}>
-      <ChatbotHeader>
+      <ChatbotHeader onClick={() => setExpanded((prev) => !prev)} style={{ cursor: 'pointer' }}>
         Ai Chatbot
         <ArrowButton
           type="text"
-          onClick={() => setExpanded((prev) => !prev)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded((prev) => !prev);
+          }}
           aria-label={expanded ? 'Collapse chatbot' : 'Expand chatbot'}
         >
-          {expanded ? <DownOutlined /> : <UpOutlined />}
+          <span role="img" aria-label="brain">
+            🧠
+          </span>
         </ArrowButton>
       </ChatbotHeader>
       {expanded && (
         <>
           <ChatArea>
             {messages.length === 0 ? (
-              <div style={{ color: '#888', textAlign: 'center', marginTop: 40 }}>
-                How can I help you today?
-              </div>
+              <div style={{ color: '#888', textAlign: 'center', marginTop: 40 }}>How can I help you today?</div>
             ) : (
               messages.map((message, index) => (
                 <div
@@ -180,7 +183,7 @@ const ChatbotInterface: React.FC = () => {
                       display: 'inline-block',
                       padding: '8px 12px',
                       borderRadius: '12px',
-                      background: message.isUser ? '#1d4173' : '#23243a',
+                      background: '#111216',
                       color: '#fff',
                       maxWidth: '80%',
                     }}
@@ -190,11 +193,7 @@ const ChatbotInterface: React.FC = () => {
                 </div>
               ))
             )}
-            {isLoading && (
-              <div style={{ color: '#888', textAlign: 'center', marginTop: 12 }}>
-                AI is thinking...
-              </div>
-            )}
+            {isLoading && <div style={{ color: '#888', textAlign: 'center', marginTop: 12 }}>AI is thinking...</div>}
           </ChatArea>
           <ChatInputWrapper>
             <StyledInput
@@ -203,11 +202,7 @@ const ChatbotInterface: React.FC = () => {
               onKeyPress={handleKeyPress}
               placeholder="Ask anything"
               suffix={
-                <SendButton
-                  type="primary"
-                  onClick={handleSendMessage}
-                  disabled={isLoading || !inputMessage.trim()}
-                >
+                <SendButton type="primary" onClick={handleSendMessage} disabled={isLoading || !inputMessage.trim()}>
                   Send
                 </SendButton>
               }
@@ -219,4 +214,4 @@ const ChatbotInterface: React.FC = () => {
   );
 };
 
-export default ChatbotInterface; 
+export default ChatbotInterface;

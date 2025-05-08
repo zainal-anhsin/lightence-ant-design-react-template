@@ -107,7 +107,7 @@ const SkeletonsPage: React.FC = () => {
       />
       <div>
         <AutoQuestion
-          right={752}
+          right={542}
           onAccept={(quiz: { question: string; answers: { option: string; text: string }[]; correctAnswer: string }) => {
             setQuestion(quiz.question);
             setAnswers(

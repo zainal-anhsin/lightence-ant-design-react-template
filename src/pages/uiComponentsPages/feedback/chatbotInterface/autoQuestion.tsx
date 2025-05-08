@@ -12,7 +12,7 @@ const FloatingAutoQuestionWrapper = styled.div<{ $expanded: boolean; $right?: nu
   bottom: 0px;
   right: ${({ $right }) => ($right !== undefined ? `${$right}px` : '32px')};
   z-index: 1000;
-  width: 700px;
+  width: 500px;
   background: #111216;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.45);
@@ -21,6 +21,7 @@ const FloatingAutoQuestionWrapper = styled.div<{ $expanded: boolean; $right?: nu
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  cursor: ${({ $expanded }) => ($expanded ? 'default' : 'pointer')};
 `;
 
 const AutoQuestionHeader = styled.div`
@@ -113,15 +114,21 @@ const AutoQuestion: React.FC<AutoQuestionProps> = ({ right = 752, onAccept }) =>
   };
 
   return (
-    <FloatingAutoQuestionWrapper $expanded={expanded} $right={right}>
-      <AutoQuestionHeader>
+    <FloatingAutoQuestionWrapper
+      $expanded={expanded}
+      $right={right}
+    >
+      <AutoQuestionHeader
+        onClick={() => setExpanded((prev) => !prev)}
+        style={{ cursor: 'pointer' }}
+      >
         Auto Generate Question
         <ArrowButton
           type="text"
-          onClick={() => setExpanded((prev) => !prev)}
+          onClick={e => { e.stopPropagation(); setExpanded((prev) => !prev); }}
           aria-label={expanded ? 'Collapse auto question' : 'Expand auto question'}
         >
-          {expanded ? <DownOutlined /> : <UpOutlined />}
+          <span role="img" aria-label="handwritten">✍️</span>
         </ArrowButton>
       </AutoQuestionHeader>
       {expanded && (
@@ -139,10 +146,10 @@ const AutoQuestion: React.FC<AutoQuestionProps> = ({ right = 752, onAccept }) =>
             <Form.Item name="difficulty" label="Difficulty" rules={[{ required: true }]}>
               <Select options={difficultyOptions} placeholder="Select difficulty" />
             </Form.Item>
-            <Form.Item name="additionalNotes" label="Additional Notes (optional)">
-              <Input.TextArea placeholder="Any extra requirements?" />
+            <Form.Item name="additionalNotes" label="Additional Notes (optional)" >
+              <Input.TextArea placeholder="Any extra requirements? You may also specify a particular scenario" />
             </Form.Item>
-            <Form.Item>
+            <Form.Item style={{ marginTop: 55 }}>
               <BaseButton type="primary" htmlType="submit" loading={loading} block>
                 Generate Question
               </BaseButton>
