@@ -42,6 +42,7 @@ import {
   QuestionListButton,
 } from './wysiwyg/quizComponents';
 import ChatbotInterface from './chatbotInterface/ChatbotInterface';
+import AutoQuestion from './chatbotInterface/autoQuestion';
 
 type Size = 'default' | 'large' | 'small';
 
@@ -83,17 +84,7 @@ const QuestionListSection: React.FC = () => {
 const SkeletonsPage: React.FC = () => {
   const { t } = useTranslation();
 
-  return (
-    <>
-      <PageTitle>{t('common.skeleton')}</PageTitle>
-      <QuizSection />
-      <ChatbotInterface />
-    </>
-  );
-};
-
-const QuizSection: React.FC = () => {
-  const { t } = useTranslation();
+  // LIFTED STATE
   const [question, setQuestion] = useState('Choose the correct answer.');
   const [answers, setAnswers] = useState([
     { label: 'A', value: '' },
@@ -103,8 +94,46 @@ const QuizSection: React.FC = () => {
   ]);
   const [correct, setCorrect] = useState('A');
 
+  return (
+    <>
+      <PageTitle>{t('common.skeleton')}</PageTitle>
+      <QuizSection
+        question={question}
+        setQuestion={setQuestion}
+        answers={answers}
+        setAnswers={setAnswers}
+        correct={correct}
+        setCorrect={setCorrect}
+      />
+      <div>
+        <AutoQuestion
+          right={752}
+          onAccept={(quiz: { question: string; answers: { option: string; text: string }[]; correctAnswer: string }) => {
+            setQuestion(quiz.question);
+            setAnswers(
+              quiz.answers.map((a: { option: string; text: string }) => ({ label: a.option, value: a.text }))
+            );
+            setCorrect(quiz.correctAnswer);
+          }}
+        />
+        <ChatbotInterface />
+      </div>
+    </>
+  );
+};
+
+const QuizSection: React.FC<{
+  question: string;
+  setQuestion: (q: string) => void;
+  answers: { label: string; value: string }[];
+  setAnswers: (a: { label: string; value: string }[]) => void;
+  correct: string;
+  setCorrect: (c: string) => void;
+}> = ({ question, setQuestion, answers, setAnswers, correct, setCorrect }) => {
+  const { t } = useTranslation();
+
   const handleAnswerChange = (idx: number, value: string) => {
-    setAnswers((prev) => prev.map((a, i) => (i === idx ? { ...a, value } : a)));
+    setAnswers(answers.map((a, i) => (i === idx ? { ...a, value } : a)));
   };
 
   const handleAddAnswer = () => {
