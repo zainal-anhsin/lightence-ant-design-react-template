@@ -14,6 +14,7 @@ import { BaseButton } from '@app/components/common/BaseButton/BaseButton';
 import { BaseFormItem } from '@app/components/common/forms/components/BaseFormItem/BaseFormItem';
 import { CheckOutlined, CloseOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import WysiwygEditor from './wysiwyg/WysiwygEditor';
+import chatbotInterface from './chatbotInterface/ChatbotInterface';
 import {
   AnswerOptionWrapper,
   AnswerLabel,
@@ -40,6 +41,7 @@ import {
   AddAnswerButton,
   QuestionListButton,
 } from './wysiwyg/quizComponents';
+import ChatbotInterface from './chatbotInterface/ChatbotInterface';
 
 type Size = 'default' | 'large' | 'small';
 
@@ -85,6 +87,7 @@ const SkeletonsPage: React.FC = () => {
     <>
       <PageTitle>{t('common.skeleton')}</PageTitle>
       <QuizSection />
+      <ChatbotInterface />
     </>
   );
 };
