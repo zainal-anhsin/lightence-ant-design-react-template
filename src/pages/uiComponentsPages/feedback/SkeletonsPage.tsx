@@ -44,6 +44,11 @@ import {
 import ChatbotInterface from './chatbotInterface/ChatbotInterface';
 import AutoQuestion from './chatbotInterface/autoQuestion';
 
+function stripHtmlTags(str: string) {
+  if (!str) return '';
+  return str.replace(/<[^>]+>/g, '');
+}
+
 type Size = 'default' | 'large' | 'small';
 
 const QuestionListSection: React.FC = () => {
@@ -94,6 +99,34 @@ const SkeletonsPage: React.FC = () => {
   ]);
   const [correct, setCorrect] = useState('A');
 
+  // --- Grammar check state ---
+  const [grammarResult, setGrammarResult] = useState<any>(null);
+  const [loadingGrammar, setLoadingGrammar] = useState(false);
+
+  // --- Grammar check handler ---
+  const handleCheckGrammar = async () => {
+    setLoadingGrammar(true);
+    setGrammarResult(null);
+    try {
+      const body = {
+        question,
+        answers: answers.map((a) => ({ option: a.label, text: a.value })),
+        correctAnswer: correct,
+      };
+      const res = await fetch('http://localhost:3007/ai/check-grammar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      setGrammarResult(data);
+    } catch (err) {
+      setGrammarResult({ error: 'Failed to check grammar.' });
+    } finally {
+      setLoadingGrammar(false);
+    }
+  };
+
   return (
     <>
       <PageTitle>{t('common.skeleton')}</PageTitle>
@@ -104,6 +137,9 @@ const SkeletonsPage: React.FC = () => {
         setAnswers={setAnswers}
         correct={correct}
         setCorrect={setCorrect}
+        handleCheckGrammar={handleCheckGrammar}
+        grammarResult={grammarResult}
+        loadingGrammar={loadingGrammar}
       />
       <div>
         <AutoQuestion
@@ -122,14 +158,29 @@ const SkeletonsPage: React.FC = () => {
   );
 };
 
-const QuizSection: React.FC<{
+type QuizSectionProps = {
   question: string;
   setQuestion: (q: string) => void;
   answers: { label: string; value: string }[];
   setAnswers: (a: { label: string; value: string }[]) => void;
   correct: string;
   setCorrect: (c: string) => void;
-}> = ({ question, setQuestion, answers, setAnswers, correct, setCorrect }) => {
+  handleCheckGrammar: () => void;
+  grammarResult: any;
+  loadingGrammar: boolean;
+};
+
+const QuizSection: React.FC<QuizSectionProps> = ({
+  question,
+  setQuestion,
+  answers,
+  setAnswers,
+  correct,
+  setCorrect,
+  handleCheckGrammar,
+  grammarResult,
+  loadingGrammar,
+}) => {
   const { t } = useTranslation();
 
   const handleAnswerChange = (idx: number, value: string) => {
@@ -203,7 +254,70 @@ const QuizSection: React.FC<{
             <BaseButton type="ghost" onClick={handleReset}>
               {t('Reset')}
             </BaseButton>
+            <BaseButton type="default" onClick={handleCheckGrammar} loading={loadingGrammar}>
+              Check Grammar
+            </BaseButton>
           </ButtonGroup>
+          {/* Display grammar check result */}
+          {grammarResult && (
+            <div style={{ marginTop: 16, background: '#222', color: '#fff', borderRadius: 8, padding: 16 }}>
+              {grammarResult.status === 'all_good' ? (
+                <div style={{ color: 'lightgreen' }}>{grammarResult.message}</div>
+              ) : grammarResult.status === 'has_errors' ? (
+                <div>
+                  <h4 style={{ color: '#ffb300', marginBottom: 16 }}>Corrections:</h4>
+                  <div style={{ marginBottom: 12 }}>
+                    <strong style={{ fontSize: 16 }}>Question:</strong>
+                    <div style={{ marginTop: 8, marginBottom: 8 }}>
+                      <span style={{ color: '#aaa' }}>Original:&nbsp;</span>
+                      <span style={{ color: '#ff4d4f', fontWeight: 600, whiteSpace: 'pre-wrap' }}>
+                        {stripHtmlTags(grammarResult.question.originalText)}
+                      </span>
+                    </div>
+                    <div style={{ marginBottom: 16 }}>
+                      <span style={{ color: '#aaa' }}>Corrected:&nbsp;</span>
+                      <span style={{ color: '#52c41a', fontWeight: 600, whiteSpace: 'pre-wrap' }}>
+                        {stripHtmlTags(grammarResult.question.correctedText)}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    {grammarResult.question.corrections.map((c: any, idx: number) => (
+                      <div
+                        key={idx}
+                        style={{
+                          background: '#181818',
+                          borderRadius: 6,
+                          padding: 10,
+                          marginBottom: 10,
+                          borderLeft: '4px solid #ffb300',
+                        }}
+                      >
+                        <div>
+                          <span style={{ color: '#aaa' }}>Type:&nbsp;</span>
+                          <span style={{ color: '#ffb300', fontWeight: 500 }}>{c.type}</span>
+                        </div>
+                        <div>
+                          <span style={{ color: '#aaa' }}>Wrong:&nbsp;</span>
+                          <span style={{ color: '#ff4d4f', fontWeight: 600 }}>{c.original}</span>
+                        </div>
+                        <div>
+                          <span style={{ color: '#aaa' }}>Correct:&nbsp;</span>
+                          <span style={{ color: '#52c41a', fontWeight: 600 }}>{c.correction}</span>
+                        </div>
+                        <div>
+                          <span style={{ color: '#aaa' }}>Explanation:&nbsp;</span>
+                          <span style={{ color: '#fff' }}>{c.explanation}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ color: 'red' }}>{grammarResult.error || 'Unknown error.'}</div>
+              )}
+            </div>
+          )}
         </SectionBox>
       </SectionWithTitle>
 
