@@ -38,6 +38,24 @@ const AutoQuestionHeader = styled.div`
   border-bottom: 1px solid #23243a;
 `;
 
+const DescriptionText = styled.div`
+  color: #fff;
+  padding: 16px 20px;
+  border-bottom: 1px solid #23243a;
+`;
+
+const MainDescription = styled.div`
+  font-size: 1rem;
+  margin-bottom: 8px;
+  text-align: center;
+`;
+
+const SubDescription = styled.div`
+  font-size: 0.875rem;
+  color: #888;
+  text-align: center;
+`;
+
 const AutoQuestionArea = styled.div`
   flex: 1;
   background: #111216;
@@ -122,7 +140,7 @@ const AutoQuestion: React.FC<AutoQuestionProps> = ({ right = 752, onAccept }) =>
         onClick={() => setExpanded((prev) => !prev)}
         style={{ cursor: 'pointer' }}
       >
-        Auto Generate Question
+        Automation Quiz Generator
         <ArrowButton
           type="text"
           onClick={e => { e.stopPropagation(); setExpanded((prev) => !prev); }}
@@ -132,54 +150,60 @@ const AutoQuestion: React.FC<AutoQuestionProps> = ({ right = 752, onAccept }) =>
         </ArrowButton>
       </AutoQuestionHeader>
       {expanded && (
-        <AutoQuestionArea>
-          <StyledForm layout="vertical" onFinish={onFinish}>
-            <Form.Item name="year" label="Year" rules={[{ required: true }]}>
-              <Select options={yearOptions} placeholder="Select year" />
-            </Form.Item>
-            <Form.Item name="subject" label="Subject" rules={[{ required: true }]}>
-              <Select options={subjectOptions} placeholder="Select subject" />
-            </Form.Item>
-            <Form.Item name="topic" label="Topic" rules={[{ required: true }]}>
-              <Input placeholder="Enter topic" />
-            </Form.Item>
-            <Form.Item name="difficulty" label="Difficulty" rules={[{ required: true }]}>
-              <Select options={difficultyOptions} placeholder="Select difficulty" />
-            </Form.Item>
-            <Form.Item name="additionalNotes" label="Additional Notes (optional)" >
-              <Input.TextArea placeholder="Any extra requirements? You may also specify a particular scenario" />
-            </Form.Item>
-            <Form.Item style={{ marginTop: 55 }}>
-              <BaseButton type="primary" htmlType="submit" loading={loading} block>
-                Generate Question
-              </BaseButton>
-            </Form.Item>
-          </StyledForm>
-          {quiz && (
-            <div style={{ marginTop: 16, background: "#23243a", borderRadius: 8, padding: 16 }}>
-              <div><b>Question:</b> {quiz.question}</div>
-              <ul>
-                {quiz.answers?.map((ans: any) => (
-                  <li key={ans.option}>
-                    <b>{ans.option}:</b> {ans.text}
-                  </li>
-                ))}
-              </ul>
-              <div><b>Correct Answer:</b> {quiz.correctAnswer}</div>
-              <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-                <BaseButton onClick={() => setQuiz(null)}>
-                  Decline
+        <>
+          <DescriptionText>
+            <MainDescription>Create quiz questions in just a few clicks.</MainDescription>
+            <SubDescription>Enter your requirements, and let the AI generate accurate questions instantly.</SubDescription>
+          </DescriptionText>
+          <AutoQuestionArea>
+            <StyledForm layout="vertical" onFinish={onFinish}>
+              <Form.Item name="year" label="Year" rules={[{ required: true }]}>
+                <Select options={yearOptions} placeholder="Select year" />
+              </Form.Item>
+              <Form.Item name="subject" label="Subject" rules={[{ required: true }]}>
+                <Select options={subjectOptions} placeholder="Select subject" />
+              </Form.Item>
+              <Form.Item name="topic" label="Topic" rules={[{ required: true }]}>
+                <Input placeholder="Enter topic" />
+              </Form.Item>
+              <Form.Item name="difficulty" label="Difficulty" rules={[{ required: true }]}>
+                <Select options={difficultyOptions} placeholder="Select difficulty" />
+              </Form.Item>
+              <Form.Item name="additionalNotes" label="Additional Notes (optional)" >
+                <Input.TextArea placeholder="Any extra requirements? You may also specify a particular scenario" />
+              </Form.Item>
+              <Form.Item style={{ marginTop: 55 }}>
+                <BaseButton type="primary" htmlType="submit" loading={loading} block>
+                  Generate Question
                 </BaseButton>
-                <BaseButton type="primary" onClick={() => {
-                  if (onAccept) onAccept(quiz);
-                  setQuiz(null);
-                }}>
-                  Accept & Apply
-                </BaseButton>
+              </Form.Item>
+            </StyledForm>
+            {quiz && (
+              <div style={{ marginTop: 16, background: "#23243a", borderRadius: 8, padding: 16 }}>
+                <div><b>Question:</b> {quiz.question}</div>
+                <ul>
+                  {quiz.answers?.map((ans: any) => (
+                    <li key={ans.option}>
+                      <b>{ans.option}:</b> {ans.text}
+                    </li>
+                  ))}
+                </ul>
+                <div><b>Correct Answer:</b> {quiz.correctAnswer}</div>
+                <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+                  <BaseButton onClick={() => setQuiz(null)}>
+                    Decline
+                  </BaseButton>
+                  <BaseButton type="primary" onClick={() => {
+                    if (onAccept) onAccept(quiz);
+                    setQuiz(null);
+                  }}>
+                    Accept & Apply
+                  </BaseButton>
+                </div>
               </div>
-            </div>
-          )}
-        </AutoQuestionArea>
+            )}
+          </AutoQuestionArea>
+        </>
       )}
     </FloatingAutoQuestionWrapper>
   );

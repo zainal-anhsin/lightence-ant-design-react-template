@@ -140,6 +140,7 @@ const SkeletonsPage: React.FC = () => {
         handleCheckGrammar={handleCheckGrammar}
         grammarResult={grammarResult}
         loadingGrammar={loadingGrammar}
+        setGrammarResult={setGrammarResult}
       />
       <div>
         <AutoQuestion
@@ -168,6 +169,7 @@ type QuizSectionProps = {
   handleCheckGrammar: () => void;
   grammarResult: any;
   loadingGrammar: boolean;
+  setGrammarResult: (result: any) => void;
 };
 
 const QuizSection: React.FC<QuizSectionProps> = ({
@@ -180,6 +182,7 @@ const QuizSection: React.FC<QuizSectionProps> = ({
   handleCheckGrammar,
   grammarResult,
   loadingGrammar,
+  setGrammarResult,
 }) => {
   const { t } = useTranslation();
 
@@ -226,6 +229,7 @@ const QuizSection: React.FC<QuizSectionProps> = ({
       { label: 'D', value: '' },
     ]);
     setCorrect('A');
+    setGrammarResult(null);
   };
 
   return (
