@@ -36,6 +36,7 @@ const AutoQuestionHeader = styled.div`
   height: 56px;
   border-radius: 16px 16px 0 0;
   border-bottom: 1px solid #23243a;
+  font-family: 'Inter', 'Poppins', 'Roboto', Arial, sans-serif;
 `;
 
 const DescriptionText = styled.div`
