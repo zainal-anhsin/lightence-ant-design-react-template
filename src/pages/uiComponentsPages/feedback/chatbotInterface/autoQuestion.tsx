@@ -1,98 +1,31 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import { BaseButton } from "@app/components/common/BaseButton/BaseButton";
-import { Input, Select, Form, message } from "antd";
-import { UpOutlined, DownOutlined } from "@ant-design/icons";
+import { Button, Input, Select, Form, message } from "antd";
 import axios from "axios";
+import "@app/styles/styles.css";
 
-const { Option } = Select;
+interface QuizAnswer {
+  option: string;
+  text: string;
+}
 
-const FloatingAutoQuestionWrapper = styled.div<{ $expanded: boolean; $right?: number }>`
-  position: fixed;
-  bottom: 0px;
-  right: ${({ $right }) => ($right !== undefined ? `${$right}px` : '32px')};
-  z-index: 1000;
-  width: 500px;
-  background: #111216;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.45);
-  transition: height 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s;
-  height: ${({ $expanded }) => ($expanded ? '700px' : '56px')};
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  cursor: ${({ $expanded }) => ($expanded ? 'default' : 'pointer')};
-`;
+interface Quiz {
+  question: string;
+  answers: QuizAnswer[];
+  correctAnswer: string;
+}
 
-const AutoQuestionHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #000;
-  color: #fff;
-  font-size: 1.3rem;
-  font-weight: 600;
-  padding: 0 20px;
-  height: 56px;
-  border-radius: 16px 16px 0 0;
-  border-bottom: 1px solid #23243a;
-  font-family: 'Inter', 'Poppins', 'Roboto', Arial, sans-serif;
-`;
+interface FormValues {
+  year: string;
+  subject: string;
+  topic: string;
+  difficulty: string;
+  additionalNotes?: string;
+}
 
-const DescriptionText = styled.div`
-  color: #fff;
-  padding: 16px 20px;
-  border-bottom: 1px solid #23243a;
-`;
-
-const MainDescription = styled.div`
-  font-size: 1rem;
-  margin-bottom: 8px;
-  text-align: center;
-`;
-
-const SubDescription = styled.div`
-  font-size: 0.875rem;
-  color: #888;
-  text-align: center;
-`;
-
-const AutoQuestionArea = styled.div`
-  flex: 1;
-  background: #111216;
-  padding: 18px 20px 0 20px;
-  overflow-y: auto;
-  color: #fff;
-`;
-
-const StyledForm = styled(Form)`
-  .ant-form-item-label > label {
-    color: #fff;
-  }
-  .ant-input, .ant-select-selector, .ant-input-textarea {
-    background: #23243a !important;
-    color: #fff !important;
-    border-radius: 8px;
-    border: none;
-  }
-  .ant-input::placeholder, .ant-select-selection-placeholder, .ant-input-textarea::placeholder {
-    color: #888 !important;
-  }
-`;
-
-const ArrowButton = styled(BaseButton)`
-  background: transparent;
-  border: none;
-  color: #fff;
-  box-shadow: none;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background: #23243a;
-  }
-`;
+interface AutoQuestionProps {
+  right?: number;
+  onAccept?: (quiz: Quiz) => void;
+}
 
 const yearOptions = [
   { label: "Year 4", value: "year 4" },
@@ -111,53 +44,62 @@ const difficultyOptions = [
   { label: "Hard", value: "hard" },
 ];
 
-interface AutoQuestionProps {
-  right?: number;
-  onAccept?: (quiz: any) => void;
-}
 const AutoQuestion: React.FC<AutoQuestionProps> = ({ right = 752, onAccept }) => {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [quiz, setQuiz] = useState<any>(null);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [form] = Form.useForm<FormValues>();
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: unknown) => {
+    const formValues = values as FormValues;
     setLoading(true);
     setQuiz(null);
     try {
-      const res = await axios.post("http://localhost:3007/ai/generate-quiz", values);
+      const res = await axios.post<Quiz>('http://localhost:3007/ai/generate-quiz', formValues);
       setQuiz(res.data);
     } catch (err) {
-      message.error("Failed to generate quiz.");
+      message.error('Failed to generate quiz.');
     }
     setLoading(false);
   };
 
   return (
-    <FloatingAutoQuestionWrapper
-      $expanded={expanded}
-      $right={right}
+    <div 
+      className={`floating-auto-question ${expanded ? 'expanded' : 'collapsed'}`}
+      style={{ right: `${right}px` }}
     >
-      <AutoQuestionHeader
+      <div 
+        className="auto-question-header"
         onClick={() => setExpanded((prev) => !prev)}
-        style={{ cursor: 'pointer' }}
       >
         Automation Quiz Generator
-        <ArrowButton
+        <Button
           type="text"
-          onClick={e => { e.stopPropagation(); setExpanded((prev) => !prev); }}
+          className="arrow-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded((prev) => !prev);
+          }}
           aria-label={expanded ? 'Collapse auto question' : 'Expand auto question'}
         >
           <span role="img" aria-label="handwritten">✍️</span>
-        </ArrowButton>
-      </AutoQuestionHeader>
+        </Button>
+      </div>
       {expanded && (
         <>
-          <DescriptionText>
-            <MainDescription>Create quiz questions in just a few clicks.</MainDescription>
-            <SubDescription>Enter your requirements, and let the AI generate accurate questions instantly.</SubDescription>
-          </DescriptionText>
-          <AutoQuestionArea>
-            <StyledForm layout="vertical" onFinish={onFinish}>
+          <div className="description-text">
+            <div className="main-description">Create quiz questions in just a few clicks.</div>
+            <div className="sub-description">
+              Enter your requirements, and let the AI generate accurate questions instantly.
+            </div>
+          </div>
+          <div className="auto-question-area">
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={onFinish}
+              className="auto-question-form"
+            >
               <Form.Item name="year" label="Year" rules={[{ required: true }]}>
                 <Select options={yearOptions} placeholder="Select year" />
               </Form.Item>
@@ -170,43 +112,44 @@ const AutoQuestion: React.FC<AutoQuestionProps> = ({ right = 752, onAccept }) =>
               <Form.Item name="difficulty" label="Difficulty" rules={[{ required: true }]}>
                 <Select options={difficultyOptions} placeholder="Select difficulty" />
               </Form.Item>
-              <Form.Item name="additionalNotes" label="Additional Notes (optional)" >
+              <Form.Item name="additionalNotes" label="Additional Notes (optional)">
                 <Input.TextArea placeholder="Any extra requirements? You may also specify a particular scenario" />
               </Form.Item>
               <Form.Item style={{ marginTop: 55 }}>
-                <BaseButton type="primary" htmlType="submit" loading={loading} block>
+                <Button type="primary" htmlType="submit" loading={loading} block>
                   Generate Question
-                </BaseButton>
+                </Button>
               </Form.Item>
-            </StyledForm>
+            </Form>
             {quiz && (
-              <div style={{ marginTop: 16, background: "#23243a", borderRadius: 8, padding: 16 }}>
+              <div className="quiz-preview">
                 <div><b>Question:</b> {quiz.question}</div>
                 <ul>
-                  {quiz.answers?.map((ans: any) => (
+                  {quiz.answers?.map((ans) => (
                     <li key={ans.option}>
                       <b>{ans.option}:</b> {ans.text}
                     </li>
                   ))}
                 </ul>
                 <div><b>Correct Answer:</b> {quiz.correctAnswer}</div>
-                <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-                  <BaseButton onClick={() => setQuiz(null)}>
-                    Decline
-                  </BaseButton>
-                  <BaseButton type="primary" onClick={() => {
-                    if (onAccept) onAccept(quiz);
-                    setQuiz(null);
-                  }}>
+                <div className="quiz-actions">
+                  <Button onClick={() => setQuiz(null)}>Decline</Button>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (onAccept) onAccept(quiz);
+                      setQuiz(null);
+                    }}
+                  >
                     Accept & Apply
-                  </BaseButton>
+                  </Button>
                 </div>
               </div>
             )}
-          </AutoQuestionArea>
+          </div>
         </>
       )}
-    </FloatingAutoQuestionWrapper>
+    </div>
   );
 };
 

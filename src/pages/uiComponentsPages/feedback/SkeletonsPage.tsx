@@ -1,55 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { PageTitle } from '@app/components/common/PageTitle/PageTitle';
-import * as S from '@app/pages/uiComponentsPages//UIComponentsPage.styles';
-import { media } from '@app/styles/themes/constants';
 import { BaseForm } from '@app/components/common/forms/BaseForm/BaseForm';
-import { BaseCol } from '@app/components/common/BaseCol/BaseCol';
-import { BaseRow } from '@app/components/common/BaseRow/BaseRow';
-import { BaseRadio } from '@app/components/common/BaseRadio/BaseRadio';
-import { BaseInput } from '@app/components/common/inputs/BaseInput/BaseInput';
-import { BaseButton } from '@app/components/common/BaseButton/BaseButton';
-import { BaseFormItem } from '@app/components/common/forms/components/BaseFormItem/BaseFormItem';
-import { CheckOutlined, CloseOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { Button, Input, Form } from 'antd';
+import { CheckOutlined, CloseOutlined, MinusOutlined } from '@ant-design/icons';
 import WysiwygEditor from './wysiwyg/WysiwygEditor';
-import chatbotInterface from './chatbotInterface/ChatbotInterface';
-import {
-  AnswerOptionWrapper,
-  AnswerLabel,
-  AnswerInput,
-  SetCorrectButton,
-  DeleteButton,
-  ButtonGroup,
-  RichContentPreview,
-  PreviewAnswer,
-  PreviewLabel,
-  PreviewText,
-  FormItem,
-  QuizSectionWrapper,
-  SectionWithTitle,
-  SectionTitle,
-  SectionBox,
-  QuizPreview,
-  QuizContent,
-  QuestionListWrapper,
-  QuestionListTitle,
-  QuestionNumbersGrid,
-  QuestionNumberButton,
-  QuestionListActions,
-  AddAnswerButton,
-  QuestionListButton,
-} from './wysiwyg/quizComponents';
 import ChatbotInterface from './chatbotInterface/ChatbotInterface';
 import AutoQuestion from './chatbotInterface/autoQuestion';
+import '@app/styles/styles.css';
 
 function stripHtmlTags(str: string) {
   if (!str) return '';
   return str.replace(/<[^>]+>/g, '');
 }
-
-type Size = 'default' | 'large' | 'small';
 
 const QuestionListSection: React.FC = () => {
   const [questions, setQuestions] = React.useState<number[]>(Array.from({ length: 10 }, (_, i) => i + 1));
@@ -66,22 +30,24 @@ const QuestionListSection: React.FC = () => {
 
   return (
     <>
-      <QuestionListTitle>Question List</QuestionListTitle>
-      <QuestionListWrapper>
-        <QuestionNumbersGrid>
+      <h3 className="question-list-title">Question List</h3>
+      <div className="question-list-wrapper">
+        <div className="question-numbers-grid">
           {questions.map((num) => (
-            <QuestionNumberButton key={num}>{num}</QuestionNumberButton>
+            <button key={num} className="question-number-button">
+              {num}
+            </button>
           ))}
-        </QuestionNumbersGrid>
-        <QuestionListActions>
-          <QuestionListButton type="primary" onClick={handleAddQuestion}>
+        </div>
+        <div className="question-list-actions">
+          <Button type="primary" className="question-list-button" onClick={handleAddQuestion}>
             + Add Question
-          </QuestionListButton>
-          <QuestionListButton type="default" onClick={handleRemoveQuestion} disabled={questions.length <= 1}>
+          </Button>
+          <Button type="default" className="question-list-button" onClick={handleRemoveQuestion} disabled={questions.length <= 1}>
             <MinusOutlined /> Remove
-          </QuestionListButton>
-        </QuestionListActions>
-      </QuestionListWrapper>
+          </Button>
+        </div>
+      </div>
     </>
   );
 };
@@ -145,11 +111,13 @@ const SkeletonsPage: React.FC = () => {
       <div>
         <AutoQuestion
           right={542}
-          onAccept={(quiz: { question: string; answers: { option: string; text: string }[]; correctAnswer: string }) => {
+          onAccept={(quiz: {
+            question: string;
+            answers: { option: string; text: string }[];
+            correctAnswer: string;
+          }) => {
             setQuestion(quiz.question);
-            setAnswers(
-              quiz.answers.map((a: { option: string; text: string }) => ({ label: a.option, value: a.text }))
-            );
+            setAnswers(quiz.answers.map((a: { option: string; text: string }) => ({ label: a.option, value: a.text })));
             setCorrect(quiz.correctAnswer);
           }}
         />
@@ -191,32 +159,27 @@ const QuizSection: React.FC<QuizSectionProps> = ({
   };
 
   const handleAddAnswer = () => {
-    const newLabel = String.fromCharCode(65 + answers.length); // Convert number to letter (A, B, C, etc.)
+    const newLabel = String.fromCharCode(65 + answers.length);
     setAnswers([...answers, { label: newLabel, value: '' }]);
   };
 
   const handleDeleteAnswer = (indexToDelete: number) => {
-    if (answers.length <= 2) return; // Prevent deletion if only 2 options remain
+    if (answers.length <= 2) return;
 
-    // Remove the answer at the specified index
     const newAnswers = answers.filter((_, index) => index !== indexToDelete);
-
-    // Update labels to be sequential
     const updatedAnswers = newAnswers.map((answer, index) => ({
       ...answer,
-      label: String.fromCharCode(65 + index), // A, B, C, etc.
+      label: String.fromCharCode(65 + index),
     }));
 
     setAnswers(updatedAnswers);
 
-    // If the deleted answer was the correct one, set the first answer as correct
     if (correct === answers[indexToDelete].label) {
       setCorrect(updatedAnswers[0].label);
     }
   };
 
   const handleSave = () => {
-    // TODO: Implement save functionality
     console.log('Saving quiz:', { question, answers, correct });
   };
 
@@ -233,150 +196,141 @@ const QuizSection: React.FC<QuizSectionProps> = ({
   };
 
   return (
-    <QuizSectionWrapper>
+    <div className="quiz-section-wrapper">
       {/* --- Left Section: Question List + Preview --- */}
-      <SectionWithTitle $width="40%" style={{ marginRight: 20 }}>
+      <div className="section-with-title" style={{ width: '40%', marginRight: 20 }}>
         <QuestionListSection />
-        <SectionTitle>Preview</SectionTitle>
-        <SectionBox>
+        <h3 className="section-title">Preview</h3>
+        <div className="section-box">
           {question && (
-            <RichContentPreview style={{ marginBottom: 16 }} dangerouslySetInnerHTML={{ __html: question }} />
+            <div className="rich-content-preview" dangerouslySetInnerHTML={{ __html: question }} />
           )}
           <div>
             {answers.map((ans) => (
-              <PreviewAnswer key={ans.label} $isCorrect={correct === ans.label}>
-                <PreviewLabel>{ans.label}</PreviewLabel>
-                <PreviewText>{ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}</PreviewText>
+              <div key={ans.label} className={`preview-answer ${correct === ans.label ? 'correct' : ''}`}>
+                <span className="preview-label">{ans.label}</span>
+                <span className="preview-text">
+                  {ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}
+                </span>
                 {correct === ans.label && <CheckOutlined style={{ color: '#52c41a', marginLeft: 8, fontSize: 18 }} />}
-              </PreviewAnswer>
+              </div>
             ))}
           </div>
-          <ButtonGroup style={{ marginTop: 14 }}>
-            <BaseButton type="primary" onClick={handleSave}>
+          <div className="button-group" style={{ marginTop: 14 }}>
+            <Button type="primary" onClick={handleSave}>
               {t('common.save')}
-            </BaseButton>
-            <BaseButton type="ghost" onClick={handleReset}>
+            </Button>
+            <Button type="ghost" onClick={handleReset}>
               {t('Reset')}
-            </BaseButton>
-            <BaseButton type="default" onClick={handleCheckGrammar} loading={loadingGrammar}>
+            </Button>
+            <Button type="default" onClick={handleCheckGrammar} loading={loadingGrammar}>
               Check Grammar
-            </BaseButton>
-          </ButtonGroup>
+            </Button>
+          </div>
           {/* Display grammar check result */}
           {grammarResult && (
-            <div style={{ marginTop: 16, background: '#222', color: '#fff', borderRadius: 8, padding: 16 }}>
+            <div className="grammar-result-container">
               {grammarResult.status === 'all_good' ? (
-                <div style={{ color: 'lightgreen' }}>{grammarResult.message}</div>
+                <div className="success-message">{grammarResult.message}</div>
               ) : grammarResult.status === 'has_errors' ? (
                 <div>
-                  <h4 style={{ color: '#ffb300', marginBottom: 16 }}>Corrections:</h4>
-                  <div style={{ marginBottom: 12 }}>
-                    <strong style={{ fontSize: 16 }}>Question:</strong>
-                    <div style={{ marginTop: 8, marginBottom: 8 }}>
-                      <span style={{ color: '#aaa' }}>Original:&nbsp;</span>
-                      <span style={{ color: '#ff4d4f', fontWeight: 600, whiteSpace: 'pre-wrap' }}>
-                        {stripHtmlTags(grammarResult.question.originalText)}
-                      </span>
+                  <h4 className="corrections-title">Corrections:</h4>
+                  <div className="question-section">
+                    <strong className="question-title">Question:</strong>
+                    <div className="text-comparison">
+                      <span className="text-comparison-label">Original:&nbsp;</span>
+                      <span className="original-text">{stripHtmlTags(grammarResult.question.originalText)}</span>
                     </div>
-                    <div style={{ marginBottom: 16 }}>
-                      <span style={{ color: '#aaa' }}>Corrected:&nbsp;</span>
-                      <span style={{ color: '#52c41a', fontWeight: 600, whiteSpace: 'pre-wrap' }}>
-                        {stripHtmlTags(grammarResult.question.correctedText)}
-                      </span>
+                    <div className="text-comparison">
+                      <span className="text-comparison-label">Corrected:&nbsp;</span>
+                      <span className="corrected-text">{stripHtmlTags(grammarResult.question.correctedText)}</span>
                     </div>
                   </div>
                   <div>
                     {grammarResult.question.corrections.map((c: any, idx: number) => (
-                      <div
-                        key={idx}
-                        style={{
-                          background: '#181818',
-                          borderRadius: 6,
-                          padding: 10,
-                          marginBottom: 10,
-                          borderLeft: '4px solid #ffb300',
-                        }}
-                      >
+                      <div key={idx} className="correction-item">
                         <div>
-                          <span style={{ color: '#aaa' }}>Type:&nbsp;</span>
-                          <span style={{ color: '#ffb300', fontWeight: 500 }}>{c.type}</span>
+                          <span className="text-comparison-label">Type:&nbsp;</span>
+                          <span className="correction-type">{c.type}</span>
                         </div>
                         <div>
-                          <span style={{ color: '#aaa' }}>Wrong:&nbsp;</span>
-                          <span style={{ color: '#ff4d4f', fontWeight: 600 }}>{c.original}</span>
+                          <span className="text-comparison-label">Wrong:&nbsp;</span>
+                          <span className="correction-wrong">{c.original}</span>
                         </div>
                         <div>
-                          <span style={{ color: '#aaa' }}>Correct:&nbsp;</span>
-                          <span style={{ color: '#52c41a', fontWeight: 600 }}>{c.correction}</span>
+                          <span className="text-comparison-label">Correct:&nbsp;</span>
+                          <span className="correction-correct">{c.correction}</span>
                         </div>
                         <div>
-                          <span style={{ color: '#aaa' }}>Explanation:&nbsp;</span>
-                          <span style={{ color: '#fff' }}>{c.explanation}</span>
+                          <span className="text-comparison-label">Explanation:&nbsp;</span>
+                          <span className="correction-explanation">{c.explanation}</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div style={{ color: 'red' }}>{grammarResult.error || 'Unknown error.'}</div>
+                <div className="error-message">{grammarResult.error || 'Unknown error.'}</div>
               )}
             </div>
           )}
-        </SectionBox>
-      </SectionWithTitle>
+        </div>
+      </div>
 
       {/* --- Content Section (right) --- */}
-      <SectionWithTitle $width="60%" style={{ marginRight: 0 }}>
-        <SectionTitle>Content</SectionTitle>
-        <SectionBox>
-          <BaseForm layout="vertical">
-            <BaseFormItem>
+      <div className="section-with-title" style={{ width: '60%', marginRight: 0 }}>
+        <h3 className="section-title">Content</h3>
+        <div className="section-box">
+          <Form layout="vertical">
+            <Form.Item>
               <WysiwygEditor value={question} onChange={setQuestion} />
-            </BaseFormItem>
+            </Form.Item>
 
-            <BaseFormItem label="Edit Answers & Options">
+            <Form.Item label="Edit Answers & Options">
               {answers.map((ans, idx) => (
-                <AnswerOptionWrapper key={ans.label}>
-                  <AnswerLabel $isCorrect={correct === ans.label}>{ans.label}</AnswerLabel>
-                  <AnswerInput
+                <div key={ans.label} className="answer-option-wrapper">
+                  <span className={`answer-label ${correct === ans.label ? 'correct' : ''}`}>{ans.label}</span>
+                  <Input
+                    className="answer-input"
                     value={ans.value}
-                    onChange={(e: any) => handleAnswerChange(idx, e.target.value)}
+                    onChange={(e) => handleAnswerChange(idx, e.target.value)}
                     placeholder={`Option ${ans.label}`}
                   />
-                  <SetCorrectButton
+                  <Button
                     type="default"
-                    $selected={correct === ans.label}
+                    className={`set-correct-button ${correct === ans.label ? 'selected' : ''}`}
                     onClick={() => setCorrect(ans.label)}
                   >
                     {correct === ans.label && <CheckOutlined style={{ marginRight: 4 }} />}
                     {correct === ans.label ? 'Correct' : 'Set as Correct'}
-                  </SetCorrectButton>
-                  <DeleteButton
+                  </Button>
+                  <Button
                     type="text"
                     danger
+                    className="delete-button"
                     icon={<CloseOutlined />}
                     onClick={() => handleDeleteAnswer(idx)}
                     disabled={answers.length <= 2}
                   />
-                </AnswerOptionWrapper>
+                </div>
               ))}
-              <AnswerOptionWrapper style={{ marginTop: 12, marginRight: 17 }}>
-                <AnswerLabel $isCorrect={false} />
+              <div className="answer-option-wrapper" style={{ marginTop: 12, marginRight: 17 }}>
+                <span className="answer-label" />
                 <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
                   <span style={{ color: '#888', fontSize: 12, marginLeft: 8 }}>
                     *Click the button to mark the correct answer and click the X button to remove the answer*
                   </span>
                 </div>
-                <AddAnswerButton type="dashed" onClick={handleAddAnswer}>
+                <Button type="dashed" className="add-answer-button" onClick={handleAddAnswer}>
                   {t('+ Add Answer')}
-                </AddAnswerButton>
-                <div style={{ width: 40 }} /> {/* acts like the delete button space */}
-              </AnswerOptionWrapper>
-            </BaseFormItem>
-          </BaseForm>
-        </SectionBox>
-      </SectionWithTitle>
-    </QuizSectionWrapper>
+                </Button>
+                <div style={{ width: 40 }} />
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
+      </div>
+    </div>
   );
 };
 

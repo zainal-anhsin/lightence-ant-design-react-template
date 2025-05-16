@@ -1,0 +1,647 @@
+/* AutoQuestion Component Styles */
+.floating-auto-question {
+  position: fixed;
+  bottom: 0px;
+  right: 32px;
+  z-index: 1000;
+  width: 500px;
+  background: #111216;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.45);
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-auto-question.expanded {
+  height: 700px;
+}
+
+.floating-auto-question.collapsed {
+  height: 56px;
+  cursor: pointer;
+}
+
+.auto-question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 0 20px;
+  height: 56px;
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid #23243a;
+  font-family: 'Inter', 'Poppins', 'Roboto', Arial, sans-serif;
+}
+
+.description-text {
+  color: #fff;
+  padding: 16px 20px;
+  border-bottom: 1px solid #23243a;
+}
+
+.main-description {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.sub-description {
+  font-size: 0.875rem;
+  color: #888;
+  text-align: center;
+}
+
+.auto-question-area {
+  flex: 1;
+  background: #111216;
+  padding: 18px 20px 0 20px;
+  overflow-y: auto;
+  color: #fff;
+}
+
+/* Ant Design Overrides */
+.auto-question-form .ant-form-item-label > label {
+  color: #fff;
+}
+
+.auto-question-form .ant-input,
+.auto-question-form .ant-select-selector,
+.auto-question-form .ant-input-textarea {
+  background: #23243a !important;
+  color: #fff !important;
+  border-radius: 8px;
+  border: none;
+}
+
+.auto-question-form .ant-input::placeholder,
+.auto-question-form .ant-select-selection-placeholder,
+.auto-question-form .ant-input-textarea::placeholder {
+  color: #888 !important;
+}
+
+.arrow-button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  box-shadow: none;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-button:hover {
+  background: #23243a;
+}
+
+.quiz-preview {
+  margin-top: 16px;
+  background: #23243a;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.quiz-preview ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.quiz-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Chatbot Interface Styles */
+.floating-chatbot {
+  position: fixed;
+  bottom: 0px;
+  right: 32px;
+  z-index: 1000;
+  width: 500px;
+  background: #111216;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.45);
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-chatbot.expanded {
+  height: 420px;
+}
+
+.floating-chatbot.collapsed {
+  height: 56px;
+  cursor: pointer;
+}
+
+.chatbot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 0 20px;
+  height: 56px;
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid #23243a;
+  font-family: 'Inter', 'Poppins', 'Roboto', Arial, sans-serif;
+}
+
+.chat-area {
+  flex: 1;
+  background: #111216;
+  padding: 18px 20px 0 20px;
+  overflow-y: auto;
+  color: #fff;
+}
+
+.chat-input-wrapper {
+  padding: 12px 20px 18px 20px;
+  background: #111216;
+  border-top: 1px solid #23243a;
+}
+
+/* Chatbot Ant Design Overrides */
+.chatbot-input .ant-input {
+  background: #23243a !important;
+  color: #fff !important;
+  border-radius: 8px;
+  border: none;
+}
+
+.chatbot-input .ant-input::placeholder {
+  color: #888;
+}
+
+.chatbot-send-button {
+  background: black !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  padding: 0 18px !important;
+  height: 36px !important;
+  margin-left: 8px !important;
+  box-shadow: none !important;
+}
+
+.chatbot-send-button:hover {
+  background: #1d4173 !important;
+  color: #fff !important;
+}
+
+.chatbot-send-button:disabled {
+  background: #23243a !important;
+  color: #888 !important;
+}
+
+.chat-message {
+  margin-bottom: 12px;
+}
+
+.chat-message.user {
+  text-align: right;
+}
+
+.chat-message.bot {
+  text-align: left;
+}
+
+.chat-message-content {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #111216;
+  color: #fff;
+  max-width: 80%;
+}
+
+.chat-welcome-message {
+  color: #888;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.chat-loading-message {
+  color: #888;
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* Quiz Components Styles */
+.answer-option-wrapper {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.answer-label {
+  width: 20px;
+  display: inline-block;
+  color: #b6eaff;
+}
+
+.answer-label.correct {
+  font-weight: 600;
+}
+
+.answer-input {
+  flex: 1;
+  margin-left: 8px;
+}
+
+.set-correct-button {
+  margin-left: 12px;
+  width: 140px;
+  background: #23243a;
+  color: #b6eaff;
+  border: 1px solid #1890ff;
+}
+
+.set-correct-button.selected {
+  background: #1890ff;
+  color: #fff;
+}
+
+.set-correct-button:hover {
+  background: #1890ff;
+  color: #fff;
+}
+
+.delete-button {
+  margin-left: 8px;
+}
+
+.add-answer-button {
+  width: 140px;
+  margin-left: 28px;
+  border-color: #1890ff;
+  background: #23243a;
+  color: #b6eaff;
+}
+
+.add-answer-button:hover {
+  background: #1890ff;
+  color: #fff;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.rich-content-preview {
+  color: #f3f3f3;
+}
+
+.rich-content-preview h1,
+.rich-content-preview h2 {
+  color: #f3f3f3;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.rich-content-preview h1 {
+  font-size: 2rem;
+}
+
+.rich-content-preview h2 {
+  font-size: 1.5rem;
+}
+
+.rich-content-preview p {
+  margin-bottom: 0.75em;
+}
+
+.rich-content-preview ul,
+.rich-content-preview ol {
+  margin-left: 1.5em;
+}
+
+.rich-content-preview strong {
+  font-weight: bold;
+}
+
+.rich-content-preview em {
+  font-style: italic;
+}
+
+.rich-content-preview .ql-align-center {
+  text-align: center;
+}
+
+.rich-content-preview .ql-align-right {
+  text-align: right;
+}
+
+.rich-content-preview .ql-align-left {
+  text-align: left;
+}
+
+.rich-content-preview .ql-align-justify {
+  text-align: justify;
+}
+
+.rich-content-preview img {
+  display: block;
+  margin: 16px auto;
+  max-width: 380px;
+  max-height: 320px;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  object-fit: contain;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.preview-answer {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  opacity: 0.9;
+  width: 100%;
+  word-break: break-word;
+}
+
+.preview-answer.correct {
+  background: #2a3b4d;
+  padding: 2px 8px;
+  color: #b6eaff;
+  font-weight: 600;
+}
+
+.preview-answer:not(.correct) {
+  color: #b0b0b0;
+  font-weight: 400;
+}
+
+.preview-label {
+  font-weight: bold;
+  width: 28px;
+  min-width: 28px;
+  text-align: left;
+  margin-top: 2px;
+}
+
+.preview-text {
+  margin-left: 8px;
+  display: block;
+  text-align: justify;
+  white-space: pre-line;
+  word-break: break-word;
+  flex: 1;
+  overflow-wrap: break-word;
+}
+
+.quiz-section-wrapper {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+  align-items: stretch;
+  height: 100%;
+}
+
+.section-with-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  margin-right: 32px;
+  height: 100%;
+}
+
+.section-title {
+  color: #e0e0e0;
+  font-weight: 500;
+  margin-bottom: 18px;
+  margin-left: 8px;
+}
+
+.section-box {
+  border-radius: 8px;
+  padding: 24px 24px 4px 24px;
+  background: #23243a;
+  color: #f3f3f3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  min-height: 100px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.question-list-wrapper {
+  background: #23243a;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.question-list-title {
+  color: #f3f3f3;
+  font-weight: 600;
+  margin-bottom: 18px;
+  margin-left: 8px;
+}
+
+.question-numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.question-number-button {
+  background: transparent;
+  color: #f3f3f3;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.question-number-button:hover {
+  background: #7c3aed;
+  color: #fff;
+}
+
+.question-number-button.active {
+  background: #7c3aed;
+  color: #fff;
+}
+
+.question-list-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.question-list-button {
+  width: 160px;
+}
+
+.grammar-result-container {
+  margin-top: 16px;
+  background: #222;
+  color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.success-message {
+  color: lightgreen;
+}
+
+.error-message {
+  color: red;
+}
+
+.corrections-title {
+  color: #ffb300;
+  margin-bottom: 16px;
+}
+
+.question-section {
+  margin-bottom: 12px;
+}
+
+.question-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.text-comparison {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.text-comparison-label {
+  color: #aaa;
+}
+
+.original-text {
+  color: #ff4d4f;
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+.corrected-text {
+  color: #52c41a;
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+.correction-item {
+  background: #181818;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-left: 4px solid #ffb300;
+}
+
+.correction-type {
+  color: #ffb300;
+  font-weight: 500;
+}
+
+.correction-wrong {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.correction-correct {
+  color: #52c41a;
+  font-weight: 600;
+}
+
+.correction-explanation {
+  color: #fff;
+}
+
+/* WysiwygEditor Styles */
+.wysiwyg-editor {
+  background: #23243a;
+  border-radius: 8px;
+}
+
+.wysiwyg-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.wysiwyg-editor .ql-editor {
+  font-family: 'Montserrat', 'Segoe UI', 'Arial', sans-serif;
+  color: #f3f3f3;
+  min-height: 100px;
+}
+
+.wysiwyg-editor .ql-editor img {
+  display: block;
+  margin: 16px auto;
+  max-width: 380px;
+  max-height: 320px;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  object-fit: contain;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.wysiwyg-editor [data-tooltip] {
+  position: relative;
+}
+
+.wysiwyg-editor [data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.wysiwyg-editor .ql-toolbar button,
+.wysiwyg-editor .ql-toolbar select {
+  margin-right: 4px;
+}
+
+/* Ant Design Overrides for WysiwygEditor */
+.wysiwyg-editor .ant-select-selector {
+  background: #23243a !important;
+  color: #f3f3f3 !important;
+  border: none !important;
+}
+
+.wysiwyg-editor .ant-btn {
+  background: #23243a;
+  color: #f3f3f3;
+  border: none;
+}
+
+.wysiwyg-editor .ant-btn:hover {
+  background: #2a2b42;
+  color: #fff;
+}
