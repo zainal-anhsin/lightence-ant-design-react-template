@@ -20,12 +20,12 @@ interface FormValues {
   topic: string;
   difficulty: string;
   additionalNotes?: string;
-}
+  }
 
 interface AutoQuestionProps {
   right?: number;
   onAccept?: (quiz: Quiz) => void;
-}
+  }
 
 const yearOptions = [
   { label: "Year 4", value: "year 4" },
@@ -137,8 +137,8 @@ const AutoQuestion: React.FC<AutoQuestionProps> = ({ right = 752, onAccept }) =>
                   <Button
                     type="primary"
                     onClick={() => {
-                      if (onAccept) onAccept(quiz);
-                      setQuiz(null);
+                    if (onAccept) onAccept(quiz);
+                    setQuiz(null);
                     }}
                   >
                     Accept & Apply

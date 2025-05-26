@@ -8,6 +8,7 @@ import { CheckOutlined, CloseOutlined, MinusOutlined } from '@ant-design/icons';
 import WysiwygEditor from './wysiwyg/WysiwygEditor';
 import ChatbotInterface from './chatbotInterface/ChatbotInterface';
 import AutoQuestion from './chatbotInterface/autoQuestion';
+import AnswersOptions from './wysiwyg/answersOptions';
 import '@app/styles/styles.css';
 
 function stripHtmlTags(str: string) {
@@ -130,8 +131,8 @@ const SkeletonsPage: React.FC = () => {
 type QuizSectionProps = {
   question: string;
   setQuestion: (q: string) => void;
-  answers: { label: string; value: string }[];
-  setAnswers: (a: { label: string; value: string }[]) => void;
+  answers: { label: string; value: string; image?: string; audio?: string }[];
+  setAnswers: (a: { label: string; value: string; image?: string; audio?: string }[]) => void;
   correct: string;
   setCorrect: (c: string) => void;
   handleCheckGrammar: () => void;
@@ -195,6 +196,10 @@ const QuizSection: React.FC<QuizSectionProps> = ({
     setGrammarResult(null);
   };
 
+  const handleAnswerMediaChange = (idx: number, media: Partial<{ image?: string; audio?: string }>) => {
+    setAnswers(answers.map((a, i) => i === idx ? { ...a, ...media } : a));
+  };
+
   return (
     <div className="quiz-section-wrapper">
       {/* --- Left Section: Question List + Preview --- */}
@@ -209,9 +214,33 @@ const QuizSection: React.FC<QuizSectionProps> = ({
             {answers.map((ans) => (
               <div key={ans.label} className={`preview-answer ${correct === ans.label ? 'correct' : ''}`}>
                 <span className="preview-label">{ans.label}</span>
-                <span className="preview-text">
-                  {ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}
-                </span>
+                <div className="preview-content">
+                  <span className="preview-text">
+                    {ans.value || <span style={{ color: '#555' }}>Option {ans.label}</span>}
+                  </span>
+                  {ans.image && (
+                    <img 
+                      src={ans.image} 
+                      alt={`Option ${ans.label}`} 
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '200px',
+                        marginTop: '8px',
+                        borderRadius: '8px'
+                      }}
+                    />
+                  )}
+                  {ans.audio && (
+                    <audio 
+                      controls 
+                      src={ans.audio}
+                      style={{
+                        width: '100%',
+                        marginTop: '8px'
+                      }}
+                    />
+                  )}
+                </div>
                 {correct === ans.label && <CheckOutlined style={{ color: '#52c41a', marginLeft: 8, fontSize: 18 }} />}
               </div>
             ))}
@@ -286,47 +315,15 @@ const QuizSection: React.FC<QuizSectionProps> = ({
               <WysiwygEditor value={question} onChange={setQuestion} />
             </Form.Item>
 
-            <Form.Item label="Edit Answers & Options">
-              {answers.map((ans, idx) => (
-                <div key={ans.label} className="answer-option-wrapper">
-                  <span className={`answer-label ${correct === ans.label ? 'correct' : ''}`}>{ans.label}</span>
-                  <Input
-                    className="answer-input"
-                    value={ans.value}
-                    onChange={(e) => handleAnswerChange(idx, e.target.value)}
-                    placeholder={`Option ${ans.label}`}
-                  />
-                  <Button
-                    type="default"
-                    className={`set-correct-button ${correct === ans.label ? 'selected' : ''}`}
-                    onClick={() => setCorrect(ans.label)}
-                  >
-                    {correct === ans.label && <CheckOutlined style={{ marginRight: 4 }} />}
-                    {correct === ans.label ? 'Correct' : 'Set as Correct'}
-                  </Button>
-                  <Button
-                    type="text"
-                    danger
-                    className="delete-button"
-                    icon={<CloseOutlined />}
-                    onClick={() => handleDeleteAnswer(idx)}
-                    disabled={answers.length <= 2}
-                  />
-                </div>
-              ))}
-              <div className="answer-option-wrapper" style={{ marginTop: 12, marginRight: 17 }}>
-                <span className="answer-label" />
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-                  <span style={{ color: '#888', fontSize: 12, marginLeft: 8 }}>
-                    *Click the button to mark the correct answer and click the X button to remove the answer*
-                  </span>
-                </div>
-                <Button type="dashed" className="add-answer-button" onClick={handleAddAnswer}>
-                  {t('+ Add Answer')}
-                </Button>
-                <div style={{ width: 40 }} />
-              </div>
-            </Form.Item>
+            <AnswersOptions
+              answers={answers}
+              correct={correct}
+              onAnswerChange={handleAnswerChange}
+              onSetCorrect={setCorrect}
+              onDeleteAnswer={handleDeleteAnswer}
+              onAddAnswer={handleAddAnswer}
+              onAnswerMediaChange={handleAnswerMediaChange}
+            />
           </Form>
         </div>
       </div>

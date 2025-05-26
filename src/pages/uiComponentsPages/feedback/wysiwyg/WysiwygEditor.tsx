@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import Quill from 'quill';
 
 interface WysiwygEditorProps {
   value: string;
@@ -29,6 +30,11 @@ const CustomToolbar = () => (
       <option value="justify" />
     </select>
     <button className="ql-image" data-tooltip="Insert Image" />
+    <button className="ql-audio" data-tooltip="Insert Audio">
+      <svg width="18" height="18" viewBox="0 0 18 18">
+        <path d="M6 14V4l7-2v16l-7-2z" fill="#444" />
+      </svg>
+    </button>
     <button className="ql-clean" data-tooltip="Clear Formatting" />
     <button className="ql-blank" data-tooltip="Insert Blank">
       <svg width="18" height="18" viewBox="0 0 18 18">
@@ -37,6 +43,32 @@ const CustomToolbar = () => (
     </button>
   </div>
 );
+
+// 1. Define and register a custom AudioBlot
+const BlockEmbed = Quill.import('blots/block/embed');
+class AudioBlot extends BlockEmbed {
+  static blotName = 'audio';
+  static tagName = 'div';
+  static className = 'ql-audio-custom';
+
+  static create(value: string) {
+    const node = super.create();
+    node.setAttribute('class', AudioBlot.className);
+    node.setAttribute('style', 'display:block;margin:16px auto;max-width:380px;');
+    const audio = document.createElement('audio');
+    audio.setAttribute('controls', '');
+    audio.setAttribute('src', value);
+    audio.setAttribute('style', 'width:100%;');
+    node.appendChild(audio);
+    return node;
+  }
+
+  static value(node: HTMLElement) {
+    const audio = node.querySelector('audio');
+    return audio ? audio.getAttribute('src') : '';
+  }
+}
+Quill.register(AudioBlot);
 
 const modules = {
   toolbar: {
@@ -66,14 +98,91 @@ const modules = {
   },
 };
 
-const formats = ['header', 'bold', 'italic', 'underline', 'align', 'list', 'bullet', 'image'];
+const formats = ['header', 'bold', 'italic', 'underline', 'align', 'list', 'bullet', 'image', 'audio'];
 
 const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
   const quillRef = useRef<ReactQuill | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const audioInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Handler to trigger file input when image button is clicked
+  const handleImageUpload = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+      fileInputRef.current.click();
+    }
+  }, []);
+
+  // Handler to trigger audio input when audio button is clicked
+  const handleAudioUpload = useCallback(() => {
+    if (audioInputRef.current) {
+      audioInputRef.current.value = '';
+      audioInputRef.current.click();
+    }
+  }, []);
+
+  // Handler to read file as base64 and insert into editor
+  const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const quill = quillRef.current?.getEditor();
+        const range = quill?.getSelection();
+        if (quill && reader.result) {
+          quill.insertEmbed(range ? range.index : 0, 'image', reader.result, 'user');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }, []);
+
+  // Handler to read audio as base64 and insert audio player using custom blot
+  const handleAudioChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const quill = quillRef.current?.getEditor();
+        const range = quill?.getSelection();
+        if (quill && reader.result) {
+          quill.insertEmbed(range ? range.index : 0, 'audio', reader.result, 'user');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }, []);
+
+  // Custom modules with image and audio handler override
+  const customModules = {
+    ...modules,
+    toolbar: {
+      ...modules.toolbar,
+      handlers: {
+        ...modules.toolbar.handlers,
+        image: handleImageUpload,
+        audio: handleAudioUpload,
+      },
+    },
+  };
 
   return (
     <div style={{ background: '#23243a', borderRadius: 8 }}>
-      <CustomToolbar /> 
+      <CustomToolbar />
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+      <input
+        type="file"
+        accept="audio/*"
+        ref={audioInputRef}
+        style={{ display: 'none' }}
+        onChange={handleAudioChange}
+      />
       <style>{`
         .ql-editor {
           font-family: 'Montserrat', 'Segoe UI', 'Arial', sans-serif;
@@ -91,11 +200,14 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
           object-fit: contain;
           box-shadow: 0 2px 12px rgba(0,0,0,0.10);
         }
-
+        .ql-editor audio, .ql-audio-custom {
+          display: block;
+          margin: 16px auto;
+          max-width: 380px;
+        }
         [data-tooltip] {
           position: relative;
         }
-
         [data-tooltip]:hover::after {
           content: attr(data-tooltip);
           position: absolute;
@@ -110,7 +222,6 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
           white-space: nowrap;
           z-index: 100;
         }
-
         .ql-toolbar button, .ql-toolbar select {
           margin-right: 4px;
         }
@@ -120,7 +231,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ value, onChange }) => {
         theme="snow"
         value={value}
         onChange={onChange}
-        modules={modules}
+        modules={customModules}
         formats={formats}
         style={{ background: '#23243a', color: '#f3f3f3', borderRadius: 8 }}
       />
