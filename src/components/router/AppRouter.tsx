@@ -9,6 +9,7 @@ import ForgotPasswordPage from '@app/pages/ForgotPasswordPage';
 import SecurityCodePage from '@app/pages/SecurityCodePage';
 import NewPasswordPage from '@app/pages/NewPasswordPage';
 import LockPage from '@app/pages/LockPage';
+import SchoolPage from '@app/pages/SchoolPage';
 
 import MainLayout from '@app/components/layouts/main/MainLayout/MainLayout';
 import ProfileLayout from '@app/components/profile/ProfileLayout';
@@ -131,6 +132,7 @@ export const AppRouter: React.FC = () => {
         <Route path={NFT_DASHBOARD_PATH} element={protectedLayout}>
           <Route index element={<NftDashboard />} />
           <Route path={MEDICAL_DASHBOARD_PATH} element={<MedicalDashboard />} />
+          <Route path="school" element={<SchoolPage />} />
           <Route path="apps">
             <Route path="feed" element={<NewsFeed />} />
           </Route>

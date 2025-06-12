@@ -3,7 +3,7 @@ import * as S from './References.styles';
 import { FacebookOutlined, GithubOutlined, LinkedinOutlined, TwitterOutlined } from '@ant-design/icons';
 
 export const References: React.FC = () => {
-  return (
+/*   return (
     <S.ReferencesWrapper>
       <S.Text>
         Made by{' '}
@@ -30,5 +30,6 @@ export const References: React.FC = () => {
         </a>
       </S.Icons>
     </S.ReferencesWrapper>
-  );
+  ); */
+  return null;
 };

@@ -125,7 +125,7 @@ const AnswersOptions: React.FC<AnswersOptionsProps> = ({
         })}
         <div className="add-answer-row">
           <p className="instruction-text">
-            *Click the button to mark the correct answer and click the X button to remove the answer*
+            *Click the button to mark the correct answer and click the X button to remove it*
           </p>
           <Button
             style={{ transform: 'translateX(-65px)' }}
